@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritwik Sharma — PhD Research Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f7f4ee;
+    --parchment-warm: #f0ebe0;
+    --parchment-deep: #e8e0d0;
+    --ink: #1e1b16;
+    --ink-mid: #3a3528;
+    --ink-light: #6b6355;
+    --ink-faint: #9c9080;
+    --rule: #c8bfad;
+    --rule-light: #ddd6c6;
+    --scholar: #2c1810;
+    --scholar-mid: #4a2c1a;
+    --scholar-light: #f5ede5;
+    --scholar-border: #d4b896;
+    --margin-bg: #ede8de;
+    --p1: #1a4a2e; --p1-bg: #eef7f1; --p1-border: #a8d5b5;
+    --p2: #3b1f6e; --p2-bg: #f3f0fa; --p2-border: #c4b5e8;
+    --p3: #7a3010; --p3-bg: #fdf3ec; --p3-border: #e8c4a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* ── NAV ── */
+  .site-nav {
+    background: var(--scholar);
+    border-bottom: 2px solid var(--scholar-mid);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    min-height: 44px;
+  }
+
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--scholar-border);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #c8b89a;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 10px 10px;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover { color: #fff; }
+  .nav-links a.active { color: #fff; border-bottom: 2px solid var(--scholar-border); }
+
+  .nav-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--scholar-border);
+    transition: all 0.2s;
+  }
+
+  .nav-mobile {
+    display: none;
+    background: var(--scholar);
+    border-bottom: 1px solid var(--scholar-mid);
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  .nav-mobile a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #c8b89a;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 24px;
+    display: block;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .nav-mobile a.active { color: #fff; }
+  .nav-mobile a:last-child { border-bottom: none; }
+  .nav-mobile.open { display: flex; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 64px 32px 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-name {
+    font-family: 'Spectral', serif;
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 6px;
+  }
+
+  .hero-name em {
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  .hero-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--scholar-mid);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .hero-thesis {
+    background: var(--scholar-light);
+    border: 1px solid var(--scholar-border);
+    border-left: 4px solid var(--scholar);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+
+  .thesis-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--scholar-mid);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .thesis-q {
+    font-family: 'Spectral', serif;
+    font-size: clamp(15px, 2.5vw, 17px);
+    font-style: italic;
+    color: var(--scholar);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .hero-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+  }
+
+  .hero-contact a, .hero-contact span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-light);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-contact a:hover { color: var(--scholar); }
+
+  /* ── SECTION NAV CARDS ── */
+  .section-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::before { content: '§'; color: var(--rule); font-size: 12px; }
+
+  .nav-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .nav-card {
+    background: var(--parchment-warm);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--scholar-mid);
+    padding: 20px 22px;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .nav-card:hover {
+    border-top-color: var(--scholar);
+    box-shadow: 0 2px 12px rgba(44,24,16,0.1);
+  }
+
+  .nav-card.p1 { border-top-color: var(--p1); }
+  .nav-card.p1:hover { border-top-color: var(--p1); }
+  .nav-card.p2 { border-top-color: var(--p2); }
+  .nav-card.p3 { border-top-color: var(--p3); }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Spectral', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .card-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--scholar-mid);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .card-arrow {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    background: var(--margin-bg);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 32px;
+    margin-bottom: 0;
+  }
+
+  .about-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .about-block {}
+
+  .about-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-faint);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .about-text {
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ── PILLARS ── */
+  .pillars {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  .pillar-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .pillar {
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+  }
+
+  .pillar.p1 { background: var(--p1-bg); border-color: var(--p1-border); border-left: 3px solid var(--p1); }
+  .pillar.p2 { background: var(--p2-bg); border-color: var(--p2-border); border-left: 3px solid var(--p2); }
+  .pillar.p3 { background: var(--p3-bg); border-color: var(--p3-border); border-left: 3px solid var(--p3); }
+
+  .pillar-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .p1 .pillar-num { color: var(--p1); }
+  .p2 .pillar-num { color: var(--p2); }
+  .p3 .pillar-num { color: var(--p3); }
+
+  .pillar-title {
+    font-family: 'Spectral', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .pillar-body {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--scholar);
+    padding: 24px 32px;
+    margin-top: 0;
+  }
+
+  .footer-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #a89070;
+    letter-spacing: 0.08em;
+  }
+
+  .footer-r {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--scholar-border);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    .hero { padding: 40px 20px 32px; }
+    .section-wrap { padding: 32px 20px; }
+    .nav-cards { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; gap: 20px; }
+    .about-strip { padding: 24px 20px; }
+    .pillar-row { grid-template-columns: 1fr; }
+    .pillars { padding: 32px 20px; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .site-footer { padding: 20px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+
+  @media (min-width: 641px) and (max-width: 900px) {
+    .hero { padding: 48px 24px 40px; }
+    .section-wrap { padding: 40px 24px; }
+    .about-strip { padding: 32px 24px; }
+    .pillars { padding: 40px 24px; }
+    .pillar-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 700px) {
+    .nav-links { display: none !important; }
+    .nav-hamburger { display: flex !important; }
+    .hero { padding: 32px 16px 28px; }
+    .section-wrap { padding: 28px 16px; }
+    .nav-cards { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; gap: 20px; }
+    .about-strip { padding: 24px 16px; }
+    .pillar-row { grid-template-columns: 1fr; }
+    .pillars { padding: 28px 16px; }
+    .hero-name { font-size: 38px !important; }
+    .site-footer { padding: 20px 16px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .thesis-q { font-size: 14px !important; }
+  }
+  @media (min-width: 701px) and (max-width: 900px) {
+    .pillar-row { grid-template-columns: 1fr 1fr; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">Ritwik Sharma</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="cv.html">CV</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="zombita.html">Zombita</a>
+    <a href="prison-sandbox.html">Prison Sandbox</a>
+    <a href="untamed-shadows.html">Untamed Shadows</a>
+  </div>
+  <button class="nav-hamburger" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="index.html" class="active">Home</a>
+  <a href="cv.html">CV</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="zombita.html">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html">Untamed Shadows</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">PhD Research Application · April 2026</div>
+  <div class="hero-name">Ritwik <em>Sharma</em></div>
+  <div class="hero-role">Game Designer · Systems Engineer · Researcher</div>
+
+  <div class="hero-thesis">
+    <div class="thesis-kicker">Research Question</div>
+    <div class="thesis-q">How do autonomous agents with private motivations, unreliable information, and social relationships produce narrative behavior that human observers recognise as coherent and meaningful?</div>
+  </div>
+
+  <div class="hero-contact">
+    <a href="mailto:ritwiksharma097@gmail.com">ritwiksharma097@gmail.com</a>
+    <span>+91 94623 32146</span>
+    <a href="https://linkedin.com/in/ritwik-sharmabb1370152" target="_blank">LinkedIn</a>
+    <span>Bikaner, Rajasthan, India</span>
+  </div>
+</section>
+
+<!-- NAV CARDS -->
+<div class="section-wrap">
+  <div class="section-label">Documentation Index</div>
+
+  <div class="nav-cards">
+    <a href="cv.html" class="nav-card">
+      <div class="card-num">01</div>
+      <div class="card-title">Curriculum Vitae</div>
+      <div class="card-sub">Background · Education · Experience</div>
+      <div class="card-desc">Professional history, technical skills, education, and the intellectual trajectory from BCA through MA to this proposal.</div>
+      <div class="card-arrow">View CV →</div>
+    </a>
+
+    <a href="portfolio.html" class="nav-card">
+      <div class="card-num">02</div>
+      <div class="card-title">Portfolio</div>
+      <div class="card-sub">200+ Games · Production Systems · Evidence</div>
+      <div class="card-desc">Seven years of shipped work — games, VR/AR, AI installations, and production backend systems. Evidence that the proposal's implementation claims are grounded in a real track record.</div>
+      <div class="card-arrow">View Portfolio →</div>
+    </a>
+
+    <a href="zombita.html" class="nav-card p1">
+      <div class="card-num">03</div>
+      <div class="card-title">Zombita</div>
+      <div class="card-sub">Research Foundation · Pillar Mapping</div>
+      <div class="card-desc">The production multi-agent system that implements the research concepts before the formal research frame existed. 4-layer memory, trust pipeline, emergent economy, NPC framework — all in production.</div>
+      <div class="card-arrow">View Research System →</div>
+    </a>
+
+    <a href="prison-sandbox.html" class="nav-card p2">
+      <div class="card-num">04</div>
+      <div class="card-title">Prison Sandbox</div>
+      <div class="card-sub">Research Environment I · Unity</div>
+      <div class="card-desc">A closed-population prison game as a research instrument. Every structural design decision maps to a research variable. Validates the agent framework in a bounded social environment.</div>
+      <div class="card-arrow">View Environment →</div>
+    </a>
+
+    <a href="untamed-shadows.html" class="nav-card p3">
+      <div class="card-num">05</div>
+      <div class="card-title">Untamed Shadows</div>
+      <div class="card-sub">Research Environment II · Unreal Engine</div>
+      <div class="card-desc">An open-territory faction game validating the same agent framework in a structurally different social system — inter-group dynamics, open space, Unreal Engine. Demonstrates engine-agnosticism.</div>
+      <div class="card-arrow">View Environment →</div>
+    </a>
+  </div>
+</div>
+
+<!-- ABOUT STRIP -->
+<div class="about-strip">
+  <div class="about-inner">
+    <div class="about-block">
+      <div class="about-kicker">Research Background</div>
+      <div class="about-text">
+        MA, Game Design — University of the Arts London (2021). MA dissertation examined branching, narrative illusion, and the conditions under which player choice produces genuinely emergent story — the same question this research approaches from the agent architecture side. Six years of production system-building since graduation, all converging on the same intellectual problem. Author of <em>Under The Cherry Blossoms</em> (2024), a published novel.
+      </div>
+    </div>
+    <div class="about-block">
+      <div class="about-kicker">Why This Proposal Exists</div>
+      <div class="about-text">
+        The research question did not come from a literature review. It came from an idea in 2018, developed through an MA at UAL, and then six years of building systems that kept implementing the same concepts without a formal research frame. The Zombita platform — built in production before this proposal was written — implements the core research variables as working infrastructure. The proposal is the formal version of what the systems already do.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH PILLARS -->
+<div class="pillars">
+  <div class="section-label">Three Research Pillars</div>
+  <div class="pillar-row">
+    <div class="pillar p1">
+      <div class="pillar-num">Pillar I · RQ1</div>
+      <div class="pillar-title">Information Reliability</div>
+      <div class="pillar-body">How does variance in agent information reliability affect the structural properties of emergent social networks? Strategic deception, selective disclosure, and exaggeration as first-class design variables.</div>
+    </div>
+    <div class="pillar p2">
+      <div class="pillar-num">Pillar II · RQ2</div>
+      <div class="pillar-title">Trust Modeling</div>
+      <div class="pillar-body">What trust mechanisms are necessary and sufficient to produce narrative behavior perceived as socially coherent? Trust as a dynamic network property shaped by agent history and social position.</div>
+    </div>
+    <div class="pillar p3">
+      <div class="pillar-num">Pillar III · RQ3</div>
+      <div class="pillar-title">Consequence Permanence</div>
+      <div class="pillar-body">How does the irreversibility of agent actions interact with information reliability to affect perceived narrative quality? Permanence as a mechanic and a methodological variable.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-l">Ritwik Sharma · PhD Research Portfolio · April 2026</div>
+    <div class="footer-r">Emergent Narrative Through Unreliable Information</div>
+  </div>
+</footer>
+
+<script>
+function toggleNav() {
+  const nav = document.getElementById('mobileNav');
+  nav.classList.toggle('open');
+}
+</script>
+</body>
+</html>
