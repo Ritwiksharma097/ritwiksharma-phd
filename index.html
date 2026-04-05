@@ -6,467 +6,10 @@
 <title>Ritwik Sharma — PhD Research Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --parchment: #f7f4ee;
-    --parchment-warm: #f0ebe0;
-    --parchment-deep: #e8e0d0;
-    --ink: #1e1b16;
-    --ink-mid: #3a3528;
-    --ink-light: #6b6355;
-    --ink-faint: #9c9080;
-    --rule: #c8bfad;
-    --rule-light: #ddd6c6;
-    --scholar: #2c1810;
-    --scholar-mid: #4a2c1a;
-    --scholar-light: #f5ede5;
-    --scholar-border: #d4b896;
-    --margin-bg: #ede8de;
-    --p1: #1a4a2e; --p1-bg: #eef7f1; --p1-border: #a8d5b5;
-    --p2: #3b1f6e; --p2-bg: #f3f0fa; --p2-border: #c4b5e8;
-    --p3: #7a3010; --p3-bg: #fdf3ec; --p3-border: #e8c4a0;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html, body {
-    background: var(--parchment);
-    color: var(--ink);
-    font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    line-height: 1.7;
-  }
-
-  /* ── NAV ── */
-  .site-nav {
-    background: var(--scholar);
-    border-bottom: 2px solid var(--scholar-mid);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 44px;
-  }
-
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--scholar-border);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 10px;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.active { color: #fff; border-bottom: 2px solid var(--scholar-border); }
-
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-
-  .nav-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--scholar-border);
-    transition: all 0.2s;
-  }
-
-  .nav-mobile {
-    display: none;
-    background: var(--scholar);
-    border-bottom: 1px solid var(--scholar-mid);
-    flex-direction: column;
-    padding: 8px 0;
-  }
-
-  .nav-mobile a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 24px;
-    display: block;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .nav-mobile a.active { color: #fff; }
-  .nav-mobile a:last-child { border-bottom: none; }
-  .nav-mobile.open { display: flex; }
-
-  /* ── HERO ── */
-  .hero {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 64px 32px 48px;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .hero-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-faint);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  .hero-name {
-    font-family: 'Spectral', serif;
-    font-size: clamp(42px, 8vw, 72px);
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-    margin-bottom: 6px;
-  }
-
-  .hero-name em {
-    font-weight: 600;
-    font-style: normal;
-  }
-
-  .hero-role {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-
-  .hero-thesis {
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    border-left: 4px solid var(--scholar);
-    padding: 20px 24px;
-    margin-bottom: 32px;
-  }
-
-  .thesis-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 8px;
-  }
-
-  .thesis-q {
-    font-family: 'Spectral', serif;
-    font-size: clamp(15px, 2.5vw, 17px);
-    font-style: italic;
-    color: var(--scholar);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  .hero-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 24px;
-  }
-
-  .hero-contact a, .hero-contact span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-light);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-  }
-
-  .hero-contact a:hover { color: var(--scholar); }
-
-  /* ── SECTION NAV CARDS ── */
-  .section-wrap {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 32px;
-  }
-
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--ink-faint);
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-label::before { content: '§'; color: var(--rule); font-size: 12px; }
-
-  .nav-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-
-  .nav-card {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 3px solid var(--scholar-mid);
-    padding: 20px 22px;
-    text-decoration: none;
-    display: block;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-
-  .nav-card:hover {
-    border-top-color: var(--scholar);
-    box-shadow: 0 2px 12px rgba(44,24,16,0.1);
-  }
-
-  .nav-card.p1 { border-top-color: var(--p1); }
-  .nav-card.p1:hover { border-top-color: var(--p1); }
-  .nav-card.p2 { border-top-color: var(--p2); }
-  .nav-card.p3 { border-top-color: var(--p3); }
-
-  .card-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--ink-faint);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .card-title {
-    font-family: 'Spectral', serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 6px;
-    line-height: 1.2;
-  }
-
-  .card-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--ink-mid);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  .card-arrow {
-    margin-top: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--ink-faint);
-    letter-spacing: 0.1em;
-  }
-
-  /* ── ABOUT STRIP ── */
-  .about-strip {
-    background: var(--margin-bg);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-    padding: 32px;
-    margin-bottom: 0;
-  }
-
-  .about-inner {
-    max-width: 860px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-
-  .about-block {}
-
-  .about-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--ink-faint);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .about-text {
-    font-size: 13.5px;
-    color: var(--ink-mid);
-    line-height: 1.7;
-    font-weight: 300;
-  }
-
-  /* ── PILLARS ── */
-  .pillars {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 32px;
-  }
-
-  .pillar-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
-  }
-
-  .pillar {
-    padding: 16px 18px;
-    border: 1px solid var(--rule);
-  }
-
-  .pillar.p1 { background: var(--p1-bg); border-color: var(--p1-border); border-left: 3px solid var(--p1); }
-  .pillar.p2 { background: var(--p2-bg); border-color: var(--p2-border); border-left: 3px solid var(--p2); }
-  .pillar.p3 { background: var(--p3-bg); border-color: var(--p3-border); border-left: 3px solid var(--p3); }
-
-  .pillar-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  .p1 .pillar-num { color: var(--p1); }
-  .p2 .pillar-num { color: var(--p2); }
-  .p3 .pillar-num { color: var(--p3); }
-
-  .pillar-title {
-    font-family: 'Spectral', serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-
-  .pillar-body {
-    font-size: 12.5px;
-    color: var(--ink-mid);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── FOOTER ── */
-  .site-footer {
-    background: var(--scholar);
-    padding: 24px 32px;
-    margin-top: 0;
-  }
-
-  .footer-inner {
-    max-width: 860px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .footer-l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #a89070;
-    letter-spacing: 0.08em;
-  }
-
-  .footer-r {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--scholar-border);
-    letter-spacing: 0.06em;
-  }
-
-  /* ── MOBILE ── */
-  @media (max-width: 640px) {
-    .hero { padding: 40px 20px 32px; }
-    .section-wrap { padding: 32px 20px; }
-    .nav-cards { grid-template-columns: 1fr; }
-    .about-inner { grid-template-columns: 1fr; gap: 20px; }
-    .about-strip { padding: 24px 20px; }
-    .pillar-row { grid-template-columns: 1fr; }
-    .pillars { padding: 32px 20px; }
-    .nav-links { display: none; }
-    .nav-hamburger { display: flex; }
-    .site-footer { padding: 20px; }
-    .footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
-  }
-
-  @media (min-width: 641px) and (max-width: 900px) {
-    .hero { padding: 48px 24px 40px; }
-    .section-wrap { padding: 40px 24px; }
-    .about-strip { padding: 32px 24px; }
-    .pillars { padding: 40px 24px; }
-    .pillar-row { grid-template-columns: 1fr 1fr; }
-  }
-
-  /* ── MOBILE ── */
-  @media (max-width: 700px) {
-    .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-    .hero { padding: 32px 16px 28px; }
-    .section-wrap { padding: 28px 16px; }
-    .nav-cards { grid-template-columns: 1fr; }
-    .about-inner { grid-template-columns: 1fr; gap: 20px; }
-    .about-strip { padding: 24px 16px; }
-    .pillar-row { grid-template-columns: 1fr; }
-    .pillars { padding: 28px 16px; }
-    .hero-name { font-size: 38px !important; }
-    .site-footer { padding: 20px 16px; }
-    .footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .thesis-q { font-size: 14px !important; }
-  }
-  @media (min-width: 701px) and (max-width: 900px) {
-    .pillar-row { grid-template-columns: 1fr 1fr; }
-  }
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-brand">Ritwik Sharma</a>
   <div class="nav-links">
@@ -490,7 +33,6 @@
   <a href="untamed-shadows.html">Untamed Shadows</a>
 </div>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-eyebrow">PhD Research Application · April 2026</div>
   <div class="hero-name">Ritwik <em>Sharma</em></div>
@@ -502,7 +44,7 @@
   </div>
 
   <div class="hero-contact">
-    <a href="/cdn-cgi/l/email-protection#d2a0bba6a5bbb9a1bab3a0bfb3e2ebe592b5bfb3bbbefcb1bdbf"><span class="__cf_email__" data-cfemail="06746f72716f6d756e67746b67363f3146616b676f6a2865696b">[email&#160;protected]</span></a>
+    <a href="mailto:ritwiksharma097@gmail.com">ritwiksharma097@gmail.com</a>
     <span>+91 94623 32146</span>
     <a href="https://www.linkedin.com/in/ritwik-sharma-bb1370152/" target="_blank">LinkedIn</a>
     <a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a>
@@ -511,7 +53,6 @@
   </div>
 </section>
 
-<!-- NAV CARDS -->
 <div class="section-wrap">
   <div class="section-label">Documentation Index</div>
 
@@ -538,7 +79,7 @@
       <div class="card-sub">Research Foundation · Pillar Mapping</div>
       <div class="card-desc">The production multi-agent system that implements the research concepts before the formal research frame existed. 4-layer memory, trust pipeline, emergent economy, NPC framework — all in production.</div>
       <div class="card-arrow">View Research System →</div>
-      <div class="card-doc" style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">Documentation (136pp) — <a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="color:var(--p1);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
+      <div style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">Documentation (136pp) — <a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link" target="_blank" style="color:var(--p1);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
     </a>
 
     <a href="prison-sandbox.html" class="nav-card p2">
@@ -547,7 +88,7 @@
       <div class="card-sub">Research Environment I · Unity</div>
       <div class="card-desc">A closed-population prison game as a research instrument. Every structural design decision maps to a research variable. Validates the agent framework in a bounded social environment.</div>
       <div class="card-arrow">View Environment →</div>
-      <div class="card-doc" style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">GDD — <a href="https://docs.google.com/document/d/15LDgsuORLPyxRyGAgXJ7WoSfIwMVSVzv/edit?usp=sharing&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="color:var(--p2);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
+      <div style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">GDD — <a href="https://docs.google.com/document/d/15LDgsuORLPyxRyGAgXJ7WoSfIwMVSVzv/edit?usp=sharing" target="_blank" style="color:var(--p2);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
     </a>
 
     <a href="untamed-shadows.html" class="nav-card p3">
@@ -556,21 +97,20 @@
       <div class="card-sub">Research Environment II · Unreal Engine</div>
       <div class="card-desc">An open-territory faction game validating the same agent framework in a structurally different social system — inter-group dynamics, open space, Unreal Engine. Demonstrates engine-agnosticism.</div>
       <div class="card-arrow">View Environment →</div>
-      <div class="card-doc" style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">GDD — <a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="color:var(--p3);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
+      <div style="font-size:0.72rem;color:var(--ink-faint);margin-top:0.5rem;font-family:'JetBrains Mono',monospace;">GDD — <a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing" target="_blank" style="color:var(--p3);text-decoration:none;" onclick="event.stopPropagation()">Google Drive</a></div>
     </a>
   </div>
 </div>
 
-<!-- ABOUT STRIP -->
 <div class="about-strip">
   <div class="about-inner">
-    <div class="about-block">
+    <div>
       <div class="about-kicker">Research Background</div>
       <div class="about-text">
-        MA, Game Design — University of the Arts London (2021). MA dissertation examined branching, narrative illusion, and the conditions under which player choice produces genuinely emergent story — the same question this research approaches from the agent architecture side. Six years of production system-building since graduation, all converging on the same intellectual problem. Author of <a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;"><em>Under The Cherry Blossoms</em></a> (2024), a published novel at <a href="https://imitatia.com/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;">imitatia.com</a>.
+        MA, Game Design — University of the Arts London (2021). MA dissertation examined branching, narrative illusion, and the conditions under which player choice produces genuinely emergent story — the same question this research approaches from the agent architecture side. Six years of production system-building since graduation, all converging on the same intellectual problem. Author of <a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="border-bottom:1px dotted var(--ink-light);"><em>Under The Cherry Blossoms</em></a> (2024).
       </div>
     </div>
-    <div class="about-block">
+    <div>
       <div class="about-kicker">Why This Proposal Exists</div>
       <div class="about-text">
         The research question did not come from a literature review. It came from an idea in 2018, developed through an MA at UAL, and then six years of building systems that kept implementing the same concepts without a formal research frame. The Zombita platform — built in production before this proposal was written — implements the core research variables as working infrastructure. The proposal is the formal version of what the systems already do.
@@ -579,7 +119,6 @@
   </div>
 </div>
 
-<!-- RESEARCH PILLARS -->
 <div class="pillars">
   <div class="section-label">Three Research Pillars</div>
   <div class="pillar-row">
@@ -601,8 +140,17 @@
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-l">Ritwik Sharma · PhD Research Portfolio · April 2026</div>
-    <div class="footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:var(--scholar-border);text-decoration:none;">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com
+    <div class="footer-r">
+      <a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">GitHub: Zombita</a>
+    </div>
+  </div>
+</footer>
+
+<script src="nav.js"></script>
+</body>
+</html>

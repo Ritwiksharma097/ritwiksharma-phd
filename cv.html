@@ -6,233 +6,9 @@
 <title>Ritwik Sharma — Curriculum Vitae</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-  :root {
-    --parchment: #f7f4ee;
-    --parchment-warm: #f0ebe0;
-    --parchment-deep: #e8e0d0;
-    --ink: #1e1b16;
-    --ink-mid: #3a3528;
-    --ink-light: #6b6355;
-    --ink-faint: #9c9080;
-    --rule: #c8bfad;
-    --rule-light: #ddd6c6;
-    --scholar: #2c1810;       /* deep scholarly brown-black */
-    --scholar-mid: #4a2c1a;
-    --scholar-light: #f5ede5;
-    --scholar-border: #d4b896;
-    --margin-bg: #ede8de;
-    --p1: #1a4a2e;   /* epistemic - deep forest */
-    --p1-bg: #eef7f1;
-    --p1-border: #a8d5b5;
-    --p2: #3b1f6e;   /* trust - deep violet */
-    --p2-bg: #f3f0fa;
-    --p2-border: #c4b5e8;
-    --p3: #7a3010;   /* consequence - deep burnt sienna */
-    --p3-bg: #fdf3ec;
-    --p3-border: #e8c4a0;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  @page { size: A4; margin: 0; }
-
-  html, body {
-    background: var(--parchment);
-    color: var(--ink);
-    font-family: 'Source Serif 4', serif;
-    font-size: 10px;
-    line-height: 1.7;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
-    background: var(--parchment);
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    position: relative;
-  }
-
-  /* Left margin strip */
-  .margin {
-    background: var(--margin-bg);
-    border-right: 1px solid var(--rule);
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    position: relative;
-  }
-
-  .margin-label {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--ink-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 8px 0;
-  }
-
-  .margin-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--rule);
-    margin: 3px auto;
-  }
-
-  .margin-section {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 12px 0;
-    font-weight: 500;
-  }
-
-  /* Main content */
-  .content {
-    padding: 24px 32px 24px 22px;
-  }
-
-  /* Top accent */
-  .page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--scholar);
-    z-index: 10;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .header-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: end;
-  }
-
-  .name {
-    font-family: 'Spectral', serif;
-    font-size: 42px;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .name em {
-    font-weight: 600;
-    font-style: normal;
-  }
-
-  .designation {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-top: 7px;
-    font-weight: 400;
-  }
-
-  .contact-col {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5px;
-    padding-bottom: 3px;
-  }
-
-  .contact-line {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--ink-light);
-    letter-spacing: 0.03em;
-  }
-
-  .contact-line a {
-    color: var(--scholar-mid);
-    text-decoration: none;
-  }
-
-  /* ── RESEARCH STATEMENT ── */
-  .thesis-block {
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    border-left: 3px solid var(--scholar);
-    padding: 11px 15px;
-    margin-bottom: 18px;
-  }
-
-  .thesis-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  .thesis-text {
-    font-family: 'Spectral', serif;
-    font-size: 11px;
-    font-style: italic;
-    color: var(--scholar);
-    line-height: 1.65;
-    font-weight: 300;
-  }
-
-  /* ── SECTION HEADERS ── */
-  .sec {
-    margin-top: 16px;
-    margin-bottom: 11px;
-  }
-
-  .sec-rule {
-    height: 1px;
-    background: var(--rule);
-    margin-bottom: 6px;
-  }
-
-  .sec-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    font-weight: 500;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .sec-title::before {
-    content: '§';
-    color: var(--rule);
-    font-size: 9px;
-    font-weight: 300;
-  }
-
-  /* ── EXPERIENCE ── */
+  /* CV-specific */
   .job {
     display: grid;
     grid-template-columns: 118px 1fr;
@@ -240,11 +16,8 @@
     padding: 10px 0;
     border-bottom: 1px solid var(--rule-light);
   }
-
   .job:last-child { border-bottom: none; }
   .job:first-child { padding-top: 0; }
-
-  .job-left {}
 
   .job-period {
     font-family: 'JetBrains Mono', monospace;
@@ -254,34 +27,26 @@
     line-height: 1.5;
     margin-bottom: 3px;
   }
-
   .job-org {
     font-size: 8.5px;
     font-weight: 600;
     color: var(--scholar-mid);
-    letter-spacing: 0.03em;
     line-height: 1.4;
     font-family: 'Source Serif 4', serif;
   }
-
   .job-loc {
     font-family: 'JetBrains Mono', monospace;
     font-size: 7.5px;
     color: var(--ink-faint);
     margin-top: 2px;
   }
-
-  .job-right {}
-
   .job-title {
     font-family: 'Source Serif 4', serif;
     font-size: 11px;
     font-weight: 600;
     color: var(--ink);
     margin-bottom: 4px;
-    letter-spacing: 0.01em;
   }
-
   .job-body {
     font-size: 9px;
     color: var(--ink-mid);
@@ -289,7 +54,6 @@
     font-weight: 300;
     margin-bottom: 5px;
   }
-
   .job-note {
     font-family: 'Spectral', serif;
     font-size: 8.5px;
@@ -299,27 +63,6 @@
     margin-top: 3px;
   }
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-    margin-top: 5px;
-  }
-
-  .tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--ink-light);
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    padding: 1px 6px;
-    letter-spacing: 0.04em;
-  }
-
-  .tag.r { background: var(--scholar-light); border-color: var(--scholar-border); color: var(--scholar-mid); }
-  .tag.g { background: var(--p1-bg); border-color: var(--p1-border); color: var(--p1); }
-
-  /* ── TWO COL LOWER ── */
   .lower {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -327,7 +70,6 @@
     margin-top: 4px;
   }
 
-  /* ── SKILLS ── */
   .skill-row {
     display: grid;
     grid-template-columns: 76px 1fr;
@@ -336,7 +78,6 @@
     border-bottom: 1px solid var(--rule-light);
     align-items: baseline;
   }
-
   .skill-row:last-child { border-bottom: none; }
 
   .sk {
@@ -346,7 +87,6 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
-
   .sv {
     font-size: 8.5px;
     color: var(--ink-mid);
@@ -354,45 +94,22 @@
     line-height: 1.5;
   }
 
-  /* ── EDUCATION ── */
   .edu {
     padding: 8px 0;
     border-bottom: 1px solid var(--rule-light);
   }
-
   .edu:last-child { border-bottom: none; padding-bottom: 0; }
   .edu:first-child { padding-top: 0; }
+  .edu-degree { font-size: 10.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .edu-school { font-size: 8.5px; color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
+  .edu-year { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: var(--ink-faint); margin-top: 2px; }
 
-  .edu-degree {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
-
-  .edu-school {
-    font-size: 8.5px;
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.5;
-  }
-
-  .edu-year {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--ink-faint);
-    margin-top: 2px;
-  }
-
-  /* ── ADDITIONAL ── */
   .addl {
     padding: 6px 0;
     border-bottom: 1px solid var(--rule-light);
   }
-
   .addl:last-child { border-bottom: none; padding-bottom: 0; }
   .addl:first-child { padding-top: 0; }
-
   .addl-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 7px;
@@ -402,144 +119,25 @@
     font-weight: 500;
     margin-bottom: 2px;
   }
+  .addl-text { font-size: 8.5px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
 
-  .addl-text {
-    font-size: 8.5px;
-    color: var(--ink-mid);
-    line-height: 1.6;
-    font-weight: 300;
+  @media (max-width: 680px) {
+    .job-period, .job-org, .job-loc { font-size: 11px; }
+    .job-title  { font-size: 14px; }
+    .job-body   { font-size: 12px; }
+    .job-note   { font-size: 12px; }
+    .sk { font-size: 11px; }
+    .sv { font-size: 12px; }
+    .edu-degree { font-size: 14px; }
+    .edu-school { font-size: 12px; }
+    .edu-year   { font-size: 11px; }
+    .addl-label { font-size: 10px; }
+    .addl-text  { font-size: 12px; }
   }
-
-  /* ── FOOTER ── */
-  .footer {
-    margin-top: 14px;
-    padding-top: 9px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    grid-column: 1 / -1;
-  }
-
-  .footer-l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--ink-faint);
-    letter-spacing: 0.1em;
-  }
-
-  .footer-r {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.08em;
-  }
-
-  /* ── SITE NAV ── */
-  .site-nav {
-    background: #2c1810;
-    border-bottom: 2px solid #4a2c1a;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 44px;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #d4b896;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    justify-content: flex-end;
-  }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 9px;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.active { color: #fff; border-bottom: 2px solid #d4b896; }
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #d4b896;
-  }
-  .nav-mobile {
-    display: none;
-    background: #2c1810;
-    border-bottom: 1px solid #4a2c1a;
-    flex-direction: column;
-    padding: 8px 0;
-    position: sticky;
-    top: 44px;
-    z-index: 99;
-  }
-  .nav-mobile a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 24px;
-    display: block;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .nav-mobile a.active { color: #fff; }
-  .nav-mobile a:last-child { border-bottom: none; }
-  .nav-mobile.open { display: flex; }
-  @media (max-width: 700px) {
-    .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-  }
-
-
-  /* ── MOBILE A4 OVERRIDE ── */
-  @media (max-width: 700px) {
-    .page {
-      width: 100% !important;
-      min-height: unset !important;
-      grid-template-columns: 0 1fr !important;
-    }
-    .margin { display: none !important; }
-    .content { padding: 20px 16px !important; }
-  }
-
 </style>
 </head>
 <body>
 
-<!-- SITE NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-brand">Ritwik Sharma</a>
   <div class="nav-links">
@@ -555,16 +153,15 @@
   </button>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-    <a href="index.html">Home</a>
-    <a href="cv.html" class="active">CV</a>
-    <a href="portfolio.html">Portfolio</a>
-    <a href="zombita.html">Zombita</a>
-    <a href="prison-sandbox.html">Prison Sandbox</a>
-    <a href="untamed-shadows.html">Untamed Shadows</a>
+  <a href="index.html">Home</a>
+  <a href="cv.html" class="active">CV</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="zombita.html">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html">Untamed Shadows</a>
 </div>
-<div class="page">
 
-  <!-- MARGIN -->
+<div class="page">
   <div class="margin">
     <div class="margin-label">Curriculum Vitae</div>
     <div class="margin-dot"></div>
@@ -575,54 +172,46 @@
     <div class="margin-section">Education</div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- HEADER -->
-    <div class="header">
-      <div class="header-inner">
+    <div class="doc-header">
+      <div class="doc-header-inner">
         <div>
-          <div class="name">Ritwik <em>Sharma</em></div>
-          <div class="designation">PhD Applicant · Emergent Narrative · Multi-Agent Systems · Interactive AI</div>
+          <div class="doc-name">Ritwik <em>Sharma</em></div>
+          <div class="doc-designation">PhD Applicant · Emergent Narrative · Multi-Agent Systems · Interactive AI</div>
         </div>
-        <div class="contact-col">
-          <div class="contact-line"><a href="/cdn-cgi/l/email-protection#1d6f74696a74766e757c6f707c2d242a5d7a707c7471337e7270"><span class="__cf_email__" data-cfemail="c2b0abb6b5aba9b1aaa3b0afa3f2fbf582a5afa3abaeeca1adaf">[email&#160;protected]</span></a></div>
-          <div class="contact-line">+91 94623 32146</div>
-          <div class="contact-line">Bikaner, Rajasthan, India</div>
-          <div class="contact-line"><a href="https://www.linkedin.com/in/ritwik-sharma-bb1370152/" target="_blank" style="color:inherit;text-decoration:none;">linkedin.com/in/ritwik-sharma-bb1370152</a></div>
+        <div class="doc-contact">
+          <div><a href="mailto:ritwiksharma097@gmail.com">ritwiksharma097@gmail.com</a></div>
+          <div>+91 94623 32146</div>
+          <div>Bikaner, Rajasthan, India</div>
+          <div><a href="https://www.linkedin.com/in/ritwik-sharma-bb1370152/" target="_blank">linkedin.com/in/ritwik-sharma-bb1370152</a></div>
         </div>
       </div>
     </div>
 
-    <!-- RESEARCH STATEMENT -->
-    <div class="thesis-block">
-      <div class="thesis-kicker">Research Orientation</div>
-      <div class="thesis-text">
-        Eight years of a single intellectual question: how do autonomous agents with private motivations, partial information, and unreliable social relationships produce behavior that human observers recognise as coherent and meaningful narrative? MA dissertation (2021), seven years of production system-building, and a <a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;">published novel</a> — all converging on the same problem. The PhD proposal is the formal version.
+    <div class="context-block">
+      <div class="ctx-kicker">Research Orientation</div>
+      <div class="ctx-text">
+        Eight years of a single intellectual question: how do autonomous agents with private motivations, partial information, and unreliable social relationships produce behavior that human observers recognise as coherent and meaningful narrative? MA dissertation (2021), seven years of production system-building, and a <a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="color:inherit;">published novel</a> — all converging on the same problem. The PhD proposal is the formal version.
       </div>
     </div>
 
-    <!-- EXPERIENCE -->
     <div class="sec">
       <div class="sec-rule"></div>
       <div class="sec-title">Professional Experience</div>
     </div>
 
     <div class="job">
-      <div class="job-left">
+      <div>
         <div class="job-period">Dec 2022 — Present</div>
         <div class="job-org">Inter Tech Interact Pvt. Ltd.</div>
         <div class="job-loc">Bikaner, India</div>
       </div>
-      <div class="job-right">
+      <div>
         <div class="job-title">Director &amp; Lead Developer</div>
-        <div class="job-body">
-          Solo-built Zombita — a production multi-agent community platform integrating a Discord bot, web API, and live game server. The system implements a 4-layer memory architecture, dynamic economy engine with emergent pricing, trust-based reputation pipeline, and NPC campaign framework with persistent choice tracking.
-        </div>
+        <div class="job-body">Solo-built Zombita — a production multi-agent community platform integrating a Discord bot, web API, and live game server. The system implements a 4-layer memory architecture, dynamic economy engine with emergent pricing, trust-based reputation pipeline, and NPC campaign framework with persistent choice tracking.</div>
         <div class="job-note">This is the implementation foundation for the PhD proposal. The research question emerged from observing what this system already did — the architecture predates the formal research framing.</div>
-        <div class="job-body" style="margin-top:5px;">
-          Additional production systems: ClaimBridge (healthcare claims, PM-JAY / Rajasthan MAA), Relay (multi-channel operations platform), NEOM Sindalah LED tower control (TouchDesigner, Saudi Arabia), AI-powered event installations for Cadbury, Adani, ICICI Bank, and Monkey Shoulder. Over 200 games and interactive experiences delivered across Unity, Construct3, PlayCanvas, and JavaScript — including VR, AR, Kinect, and physical hardware installations.
-        </div>
+        <div class="job-body" style="margin-top:5px;">Additional production systems: ClaimBridge (healthcare claims, PM-JAY / Rajasthan MAA), Relay (multi-channel operations platform), NEOM Sindalah LED tower control (TouchDesigner, Saudi Arabia), AI-powered event installations for Cadbury, Adani, ICICI Bank, and Monkey Shoulder. Over 200 games and interactive experiences delivered across Unity, Construct3, PlayCanvas, and JavaScript — including VR, AR, Kinect, and physical hardware installations.</div>
         <div class="tags">
           <span class="tag r">Agent Systems</span>
           <span class="tag r">Economy Simulation</span>
@@ -639,16 +228,14 @@
     </div>
 
     <div class="job">
-      <div class="job-left">
+      <div>
         <div class="job-period">Jul 2019 — Dec 2021</div>
         <div class="job-org">Skunkworks Experiential</div>
         <div class="job-loc">Gurugram, India</div>
       </div>
-      <div class="job-right">
+      <div>
         <div class="job-title">Game Designer / Developer</div>
-        <div class="job-body">
-          Designed and developed interactive gaming and immersive experiential systems for live events and brand activations. Built VR Cricket (HTC Vive, Unity), physical installations (Batak, Peddle-to-Cycle, Beat Saber replica), AR experiences for Audi Motors, and over 50 browser-based games for event-based advertising using Construct3 and JavaScript.
-        </div>
+        <div class="job-body">Designed and developed interactive gaming and immersive experiential systems for live events and brand activations. Built VR Cricket (HTC Vive, Unity), physical installations (Batak, Peddle-to-Cycle, Beat Saber replica), AR experiences for Audi Motors, and over 50 browser-based games for event-based advertising using Construct3 and JavaScript.</div>
         <div class="tags">
           <span class="tag g">Unity</span>
           <span class="tag g">VR / HTC Vive</span>
@@ -661,12 +248,12 @@
     </div>
 
     <div class="job">
-      <div class="job-left">
+      <div>
         <div class="job-period">Aug — Nov 2018</div>
         <div class="job-org">Neurocompusy</div>
         <div class="job-loc">Jaipur, India</div>
       </div>
-      <div class="job-right">
+      <div>
         <div class="job-title">Software Development Intern</div>
         <div class="job-body">.NET and C# application development, debugging, and technical documentation.</div>
         <div class="tags">
@@ -675,59 +262,31 @@
       </div>
     </div>
 
-    <!-- LOWER TWO COL -->
     <div class="lower">
-
-      <!-- SKILLS -->
       <div>
         <div class="sec">
           <div class="sec-rule"></div>
           <div class="sec-title">Technical Capabilities</div>
         </div>
-
-        <div class="skill-row">
-          <div class="sk">Languages</div>
-          <div class="sv">Python, C#, C++, JavaScript, TypeScript, Lua, SQL, Java, PHP</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">Game / XR</div>
-          <div class="sv">Unity 2D/3D/URP (7+ years), Unreal Engine 4, Vuforia AR, HTC Vive, Meta Quest, Kinect, Lua modding, 200+ shipped games</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">Backend</div>
-          <div class="sv">FastAPI, Node.js, PostgreSQL, SQLAlchemy, REST, WebSocket</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">Frontend</div>
-          <div class="sv">React, Next.js, TypeScript, Tailwind, Construct3, PlayCanvas</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">AI</div>
-          <div class="sv">OpenAI API, Stable Diffusion, Ollama / Qwen (local LLM), multi-model pipelines</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">Infra</div>
-          <div class="sv">Linux VPS, Nginx, systemd, SSH, server orchestration</div>
-        </div>
-        <div class="skill-row">
-          <div class="sk">Creative</div>
-          <div class="sv">TouchDesigner, Arduino, Blender, Photoshop, Figma</div>
-        </div>
+        <div class="skill-row"><div class="sk">Languages</div><div class="sv">Python, C#, C++, JavaScript, TypeScript, Lua, SQL, Java, PHP</div></div>
+        <div class="skill-row"><div class="sk">Game / XR</div><div class="sv">Unity 2D/3D/URP (7+ years), Unreal Engine 4, Vuforia AR, HTC Vive, Meta Quest, Kinect, Lua modding, 200+ shipped games</div></div>
+        <div class="skill-row"><div class="sk">Backend</div><div class="sv">FastAPI, Node.js, PostgreSQL, SQLAlchemy, REST, WebSocket</div></div>
+        <div class="skill-row"><div class="sk">Frontend</div><div class="sv">React, Next.js, TypeScript, Tailwind, Construct3, PlayCanvas</div></div>
+        <div class="skill-row"><div class="sk">AI</div><div class="sv">OpenAI API, Stable Diffusion, Ollama / Qwen (local LLM), multi-model pipelines</div></div>
+        <div class="skill-row"><div class="sk">Infra</div><div class="sv">Linux VPS, Nginx, systemd, SSH, server orchestration</div></div>
+        <div class="skill-row"><div class="sk">Creative</div><div class="sv">TouchDesigner, Arduino, Blender, Photoshop, Figma</div></div>
       </div>
 
-      <!-- EDUCATION + ADDITIONAL -->
       <div>
         <div class="sec">
           <div class="sec-rule"></div>
           <div class="sec-title">Education</div>
         </div>
-
         <div class="edu">
           <div class="edu-degree">MA, Game Design</div>
           <div class="edu-school">London College of Communication<br>University of the Arts London, UK</div>
           <div class="edu-year">2019 — 2021</div>
         </div>
-
         <div class="edu">
           <div class="edu-degree">Bachelor of Computer Applications</div>
           <div class="edu-school">Engineering College Bikaner, India</div>
@@ -738,22 +297,18 @@
           <div class="sec-rule"></div>
           <div class="sec-title">Additional</div>
         </div>
-
         <div class="addl">
           <div class="addl-label">MA Dissertation</div>
           <div class="addl-text">How does branching and illusion in story affect gameplay in role-playing games? Examined conditions under which player choice produces genuinely emergent narrative rather than authored variation — the same research question approached from the design side, before the agent architecture side.</div>
         </div>
-
         <div class="addl">
           <div class="addl-label">Published Novel</div>
-          <div class="addl-text"><a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;"><em>Under The Cherry Blossoms</em></a> (2024) — fiction demonstrating sustained engagement with character interiority, social dynamics, and narrative consequence. Published at <a href="https://imitatia.com/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;">imitatia.com</a>.</div>
+          <div class="addl-text"><a href="https://imitatia.com/under-the-cherry-blossoms/" target="_blank" style="color:inherit;"><em>Under The Cherry Blossoms</em></a> (2024) — fiction demonstrating sustained engagement with character interiority, social dynamics, and narrative consequence. Published at <a href="https://imitatia.com/" target="_blank" style="color:inherit;">imitatia.com</a>.</div>
         </div>
-
         <div class="addl">
           <div class="addl-label">Research System</div>
-          <div class="addl-text">Zombita — production multi-agent platform with 4-layer memory, trust-based reputation pipeline, emergent economy, and NPC campaign framework. 136 pages of technical documentation. The implementation foundation for the proposed research.</div>
+          <div class="addl-text">Zombita — production multi-agent platform with 4-layer memory, trust-based reputation pipeline, emergent economy, and NPC campaign framework. 136 pages of technical documentation.</div>
         </div>
-
         <div class="addl">
           <div class="addl-label">Game Development</div>
           <div class="addl-text">200+ games shipped across Unity (2018–present), Construct3, PlayCanvas, and JavaScript. VR, AR, Kinect, physical installations, HTML5 event activations, and browser games for international brands.</div>
@@ -761,11 +316,14 @@
       </div>
     </div>
 
-    <!-- FOOTER -->
-    <div class="footer">
-      <div class="footer-l">Ritwik Sharma · Curriculum Vitae · April 2026</div>
-      <div class="footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:inherit;text-decoration:none;">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank" style="color:inherit;text-decoration:none;">GitHub: Zombita</a></div>
+    <div class="doc-footer">
+      <div class="doc-footer-l">Ritwik Sharma · Curriculum Vitae · April 2026</div>
+      <div class="doc-footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">GitHub: Zombita</a></div>
     </div>
 
   </div>
-</d
+</div>
+
+<script src="nav.js"></script>
+</body>
+</html>

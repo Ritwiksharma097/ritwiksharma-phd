@@ -6,273 +6,41 @@
 <title>Untamed Shadows — Research Environment II</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
   :root {
-    --parchment: #f7f4ee;
-    --parchment-warm: #f0ebe0;
-    --ink: #1e1b16;
-    --ink-mid: #3a3528;
-    --ink-light: #6b6355;
-    --ink-faint: #9c9080;
-    --rule: #c8bfad;
-    --rule-light: #ddd6c6;
-    --margin-bg: #ede8de;
-    /* Environment accent — deep forest/wilderness */
-    --env: #1a3520;
-    --env-mid: #2d5535;
-    --env-light: #eef5f0;
+    --env:        #1a3520;
+    --env-mid:    #2d5535;
+    --env-light:  #eef5f0;
     --env-border: #9dc8a8;
-    /* Pillars */
-    --p1: #1a4a2e; --p1-bg: #eef7f1; --p1-border: #a8d5b5;
-    --p2: #3b1f6e; --p2-bg: #f3f0fa; --p2-border: #c4b5e8;
-    --p3: #7a3010; --p3-bg: #fdf3ec; --p3-border: #e8c4a0;
   }
+  .page::before { background: var(--env) !important; }
+  .margin-section { color: var(--env-mid); }
+  .env-tag { background: var(--env-light); border-color: var(--env-border); color: var(--env-mid); }
+  .doc-sub { color: var(--env-mid); }
+  .context-block { background: var(--env-light); border-color: var(--env-border); border-left-color: var(--env); }
+  .ctx-kicker { color: var(--env-mid); }
+  .ctx-text { color: var(--env); }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  @page { size: A4; margin: 0; }
-
-  html, body {
-    background: var(--parchment);
-    color: var(--ink);
-    font-family: 'Source Serif 4', serif;
-    font-size: 10px;
-    line-height: 1.7;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
-    background: var(--parchment);
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    position: relative;
-  }
-
-  .page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--env);
-    z-index: 10;
-  }
-
-  .margin {
-    background: var(--margin-bg);
-    border-right: 1px solid var(--rule);
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .margin-label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--ink-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 8px 0;
-  }
-
-  .margin-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--rule); margin: 3px auto; }
-
-  .margin-section {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6px;
-    color: var(--env-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 10px 0;
-    font-weight: 500;
-  }
-
-  .content { padding: 24px 32px 24px 22px; }
-
-  .header {
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .header-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: end;
-  }
-
-  .env-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--env-mid);
-    background: var(--env-light);
-    border: 1px solid var(--env-border);
-    padding: 2px 8px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-bottom: 7px;
-  }
-
-  .title {
-    font-family: 'Spectral', serif;
-    font-size: 36px;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .title em { font-weight: 600; font-style: normal; }
-
-  .sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--env-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-top: 7px;
-  }
-
-  .meta-col {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    text-align: right;
-    padding-bottom: 3px;
-  }
-
-  .meta-line {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--ink-light);
-  }
-
-  .meta-line span { color: var(--ink-mid); font-weight: 500; }
-
-  .context {
-    background: var(--env-light);
-    border: 1px solid var(--env-border);
-    border-left: 3px solid var(--env);
-    padding: 11px 15px;
-    margin-bottom: 18px;
-  }
-
-  .ctx-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--env-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  .ctx-text {
-    font-family: 'Spectral', serif;
-    font-size: 11px;
-    font-style: italic;
-    color: var(--env);
-    line-height: 1.65;
-    font-weight: 300;
-  }
-
-  .sec { margin-top: 16px; margin-bottom: 11px; }
-  .sec-rule { height: 1px; background: var(--rule); margin-bottom: 6px; }
-  .sec-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    font-weight: 500;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .sec-title::before { content: '§'; color: var(--rule); font-size: 9px; font-weight: 300; }
-
-  .rationale-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .rat-card {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 2px solid var(--env);
-    padding: 11px 13px;
-  }
-
+  .rationale-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .rat-card { background: var(--parchment-warm); border: 1px solid var(--rule); border-top: 2px solid var(--env); padding: 11px 13px; }
   .rat-title { font-size: 10px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
   .rat-body { font-size: 9px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
 
-  /* Contrast table */
-  .contrast {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    margin-bottom: 14px;
-  }
-
-  .contrast th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    padding: 7px 10px;
-    text-align: left;
-    border-bottom: 1px solid var(--rule);
-    background: var(--parchment-warm);
-  }
-
+  .contrast { width: 100%; border-collapse: collapse; background: var(--parchment-warm); border: 1px solid var(--rule); margin-bottom: 14px; }
+  .contrast th { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--rule); background: var(--parchment-warm); }
   .contrast td { padding: 5px 10px; font-size: 9px; vertical-align: top; border-bottom: 1px solid var(--rule-light); }
   .contrast tr:last-child td { border-bottom: none; }
-
   .ct-a { font-weight: 600; color: var(--ink); width: 130px; }
   .ct-b { color: var(--ink-mid); font-weight: 300; line-height: 1.55; }
   .ct-c { color: var(--env-mid); font-weight: 300; line-height: 1.55; }
 
-  /* Faction grid */
-  .faction-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .faction-card {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 2px solid var(--env-mid);
-    padding: 9px 10px;
-  }
-
+  .faction-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .faction-card { background: var(--parchment-warm); border: 1px solid var(--rule); border-top: 2px solid var(--env-mid); padding: 9px 10px; }
   .faction-name { font-size: 10px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
-  .faction-type {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--env-mid);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
+  .faction-type { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--env-mid); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
   .faction-desc { font-size: 8.5px; color: var(--ink-mid); line-height: 1.55; font-weight: 300; }
 
-  /* Variable table */
   .var-table { width: 100%; border-collapse: collapse; background: var(--parchment-warm); border: 1px solid var(--rule); margin-bottom: 14px; }
   .var-table tr { border-bottom: 1px solid var(--rule-light); }
   .var-table tr:last-child { border-bottom: none; }
@@ -280,142 +48,28 @@
   .vt-a { font-weight: 600; color: var(--ink); width: 140px; line-height: 1.4; }
   .vt-b { color: var(--ink-mid); font-weight: 300; line-height: 1.55; }
   .vt-c { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; text-align: center; padding: 5px 8px; width: 90px; }
-  .badge-p1 { color: var(--p1); background: var(--p1-bg); border: 1px solid var(--p1-border); }
-  .badge-p2 { color: var(--p2); background: var(--p2-bg); border: 1px solid var(--p2-border); }
-  .badge-p3 { color: var(--p3); background: var(--p3-bg); border: 1px solid var(--p3-border); }
 
-  .status-note {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-left: 2px solid var(--env-mid);
-    padding: 9px 13px;
-    margin-bottom: 14px;
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 12px;
-    align-items: center;
-  }
-
+  .status-note { background: var(--parchment-warm); border: 1px solid var(--rule); border-left: 2px solid var(--env-mid); padding: 9px 13px; margin-bottom: 14px; display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; }
   .status-label { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--env-mid); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; line-height: 1.5; }
   .status-text { font-size: 9px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
 
-  .footer {
-    margin-top: 14px;
-    padding-top: 9px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  @media (max-width: 680px) {
+    .rat-title { font-size: 14px; }
+    .rat-body  { font-size: 12px; }
+    .contrast th, .contrast td { font-size: 11px; padding: 6px 8px; }
+    .faction-name { font-size: 13px; }
+    .faction-type { font-size: 10px; }
+    .faction-desc { font-size: 12px; }
+    .var-table td { font-size: 12px; }
+    .vt-c { font-size: 10px; width: auto; }
+    .status-label { font-size: 10px; }
+    .status-text  { font-size: 12px; }
+    .status-note { grid-template-columns: 1fr; }
   }
-
-  .footer-l { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--ink-faint); letter-spacing: 0.1em; }
-  .footer-r { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--env-mid); letter-spacing: 0.08em; }
-
-  /* ── SITE NAV ── */
-  .site-nav {
-    background: #2c1810;
-    border-bottom: 2px solid #4a2c1a;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 44px;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #d4b896;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    justify-content: flex-end;
-  }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 9px;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.active { color: #fff; border-bottom: 2px solid #d4b896; }
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #d4b896;
-  }
-  .nav-mobile {
-    display: none;
-    background: #2c1810;
-    border-bottom: 1px solid #4a2c1a;
-    flex-direction: column;
-    padding: 8px 0;
-    position: sticky;
-    top: 44px;
-    z-index: 99;
-  }
-  .nav-mobile a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 24px;
-    display: block;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .nav-mobile a.active { color: #fff; }
-  .nav-mobile a:last-child { border-bottom: none; }
-  .nav-mobile.open { display: flex; }
-  @media (max-width: 700px) {
-    .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-  }
-
-
-  /* ── MOBILE A4 OVERRIDE ── */
-  @media (max-width: 700px) {
-    .page {
-      width: 100% !important;
-      min-height: unset !important;
-      grid-template-columns: 0 1fr !important;
-    }
-    .margin { display: none !important; }
-    .content { padding: 20px 16px !important; }
-  }
-
 </style>
 </head>
 <body>
 
-<!-- SITE NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-brand">Ritwik Sharma</a>
   <div class="nav-links">
@@ -431,15 +85,15 @@
   </button>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-    <a href="index.html">Home</a>
-    <a href="cv.html">CV</a>
-    <a href="portfolio.html">Portfolio</a>
-    <a href="zombita.html">Zombita</a>
-    <a href="prison-sandbox.html">Prison Sandbox</a>
-    <a href="untamed-shadows.html" class="active">Untamed Shadows</a>
+  <a href="index.html">Home</a>
+  <a href="cv.html">CV</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="zombita.html">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html" class="active">Untamed Shadows</a>
 </div>
-<div class="page">
 
+<div class="page">
   <div class="margin">
     <div class="margin-label">Env. II</div>
     <div class="margin-dot"></div>
@@ -452,156 +106,82 @@
 
   <div class="content">
 
-    <div class="header">
-      <div class="header-inner">
+    <div class="doc-header">
+      <div class="doc-header-inner">
         <div>
           <div class="env-tag">Research Environment II · Unreal Engine (C++ / Blueprints)</div>
-          <div class="title"><em>Untamed Shadows</em></div>
-          <div class="sub">Open Social System · Inter-group Dynamics · Cross-engine Validation</div>
+          <div class="doc-title"><em>Untamed Shadows</em></div>
+          <div class="doc-sub">Open Social System · Inter-group Dynamics · Cross-engine Validation</div>
         </div>
         <div class="meta-col">
           <div class="meta-line">Engine <span>Unreal Engine 4 · C++ / Blueprints</span></div>
           <div class="meta-line">Genre <span>Third-person action</span></div>
           <div class="meta-line">Setting <span>Wilderness, competing animal factions</span></div>
           <div class="meta-line">Status <span>Designed · Phase 1 implementation</span></div>
-          <div class="meta-line">Game Design Document <span><a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="color:var(--p1);text-decoration:none;font-weight:500;">Read Full GDD →</a></span></div>
+          <div class="meta-line">GDD <span><a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing" target="_blank">Read Full GDD →</a></span></div>
         </div>
       </div>
     </div>
 
-
-    <div style="margin: 0 0 2rem 0; padding: 1rem 1.4rem; background: rgba(255,255,255,0.03); border-left: 3px solid #9b7ec8; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
-      <div style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:#888;">Full Documentation Available</div>
-      <a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#9b7ec8; text-decoration:none; font-weight:600; letter-spacing:0.04em; border:1px solid #9b7ec8; padding:0.4rem 1rem; transition:all 0.2s;" onmouseover="this.style.background='#9b7ec8';this.style.color='#0a0a0a'" onmouseout="this.style.background='transparent';this.style.color='#9b7ec8'">Read Full Game Design Document →</a>
+    <div class="doc-banner" style="border-color:#9b7ec8;">
+      <div class="doc-banner-label">Full Documentation Available</div>
+      <a href="https://docs.google.com/document/d/1TMiyFP1j3nB7OHsEDcf7FTNkO1Kvau9V/edit?usp=sharing" target="_blank" class="doc-banner-link" style="color:#9b7ec8;border-color:#9b7ec8;" onmouseover="this.style.background='#9b7ec8';this.style.color='#0a0a0a'" onmouseout="this.style.background='transparent';this.style.color='#9b7ec8'">Read Full Game Design Document →</a>
     </div>
-    <div class="context">
+
+    <div class="context-block">
       <div class="ctx-kicker">Research Instrument Context</div>
-      <div class="ctx-text">
-        Untamed Shadows is the cross-validation environment for the PhD simulation framework. Its purpose is not to replicate Prison Sandbox in a different setting — it is to test whether the agent framework generalises to a structurally different social topology: open territory instead of closed space, inter-group dynamics instead of individual relationships, faction-level trust propagation instead of personal trust. The Unreal implementation validates engine-agnosticism.
-      </div>
+      <div class="ctx-text">Untamed Shadows is the cross-validation environment for the PhD simulation framework. Its purpose is not to replicate Prison Sandbox in a different setting — it is to test whether the agent framework generalises to a structurally different social topology: open territory instead of closed space, inter-group dynamics instead of individual relationships, faction-level trust propagation instead of personal trust.</div>
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Why This Environment — Cross-Validation Design Rationale</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Why This Environment — Cross-Validation Design Rationale</div></div>
 
     <div class="rationale-grid">
       <div class="rat-card">
         <div class="rat-title">Open Territory — Social Topology Contrast</div>
-        <div class="rat-body">Prison Sandbox uses a closed, bounded population. Untamed Shadows uses open wilderness territory with permeable faction boundaries. This structural contrast is the point: if the agent framework produces coherent emergent narrative in both, it demonstrates generalisability across fundamentally different social geometries. A framework that only works in one topology is not a framework — it is a genre-specific hack.</div>
+        <div class="rat-body">Prison Sandbox uses a closed, bounded population. Untamed Shadows uses open wilderness territory with permeable faction boundaries. This structural contrast is the point: if the agent framework produces coherent emergent narrative in both, it demonstrates generalisability across fundamentally different social geometries.</div>
       </div>
       <div class="rat-card">
         <div class="rat-title">Faction-level Trust — Group Propagation</div>
-        <div class="rat-body">Prison Sandbox models trust as an individual-level construct. Untamed Shadows models trust at the faction level — information credibility is mediated by group membership and inter-faction history. This allows the framework to test whether RQ2's trust modeling mechanisms scale from personal relationships to institutional ones, which is a key generalisability question.</div>
+        <div class="rat-body">Prison Sandbox models trust as an individual-level construct. Untamed Shadows models trust at the faction level — information credibility is mediated by group membership and inter-faction history. This tests whether RQ2's trust modeling mechanisms scale from personal relationships to institutional ones.</div>
       </div>
       <div class="rat-card">
         <div class="rat-title">Act Structure — Consequence at Scale</div>
-        <div class="rat-body">Choices made in Act 2 permanently restructure Act 3 — faction alliances, available territories, and agent relationships. This implements consequence permanence (Pillar III) at a narrative structural level rather than a moment-to-moment tactical level, allowing the human evaluation phase to distinguish between micro-scale and macro-scale irreversibility effects on perceived narrative coherence.</div>
+        <div class="rat-body">Choices made in Act 2 permanently restructure Act 3 — faction alliances, available territories, and agent relationships. This implements consequence permanence (Pillar III) at a narrative structural level, allowing the human evaluation phase to distinguish between micro-scale and macro-scale irreversibility effects on perceived narrative coherence.</div>
       </div>
       <div class="rat-card">
         <div class="rat-title">Engine Change — Framework Validation</div>
-        <div class="rat-body">The agent simulation layer runs identically beneath Unreal Engine's C++/Blueprints architecture as beneath Unity's C#. This is not a platform preference — it is a methodological validation. The cross-engine design is itself a contribution (Section 6 of the proposal): it demonstrates the framework is a generalizable research tool, not a game-specific implementation.</div>
+        <div class="rat-body">The agent simulation layer is designed to run beneath Unreal Engine's C++/Blueprints architecture as beneath Unity's C#. This validates the framework as a generalizable research tool, not a game-specific implementation — and is itself a contribution if achieved (Section 6 of the proposal).</div>
       </div>
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Environments Contrast — What Each Environment Tests</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Environments Contrast — What Each Environment Tests</div></div>
 
     <table class="contrast">
-      <tr>
-        <th>Dimension</th>
-        <th>Prison Sandbox (Env. I)</th>
-        <th>Untamed Shadows (Env. II)</th>
-      </tr>
-      <tr>
-        <td class="ct-a">Social topology</td>
-        <td class="ct-b">Closed bounded population, fixed agent count</td>
-        <td class="ct-c">Open territory, permeable faction boundaries</td>
-      </tr>
-      <tr>
-        <td class="ct-a">Trust unit</td>
-        <td class="ct-b">Individual-to-individual personal trust</td>
-        <td class="ct-c">Faction-level group trust propagation</td>
-      </tr>
-      <tr>
-        <td class="ct-a">Information flow</td>
-        <td class="ct-b">Rumor chains through close proximity</td>
-        <td class="ct-c">Territorial intelligence across faction domains</td>
-      </tr>
-      <tr>
-        <td class="ct-a">Consequence scope</td>
-        <td class="ct-b">Moment-to-moment: NPC death, route closure</td>
-        <td class="ct-c">Structural: Act 2 choices reshape Act 3 world</td>
-      </tr>
-      <tr>
-        <td class="ct-a">Engine</td>
-        <td class="ct-b">Unity · C# · top-down 2D/3D</td>
-        <td class="ct-c">Unreal Engine 4 · C++ / Blueprints · third-person</td>
-      </tr>
-      <tr>
-        <td class="ct-a">Primary validation</td>
-        <td class="ct-b">RQ1: information reliability → network structure</td>
-        <td class="ct-c">RQ4: framework generalises across social topologies</td>
-      </tr>
+      <tr><th>Dimension</th><th>Prison Sandbox (Env. I)</th><th>Untamed Shadows (Env. II)</th></tr>
+      <tr><td class="ct-a">Social topology</td><td class="ct-b">Closed bounded population, fixed agent count</td><td class="ct-c">Open territory, permeable faction boundaries</td></tr>
+      <tr><td class="ct-a">Trust unit</td><td class="ct-b">Individual-to-individual personal trust</td><td class="ct-c">Faction-level group trust propagation</td></tr>
+      <tr><td class="ct-a">Information flow</td><td class="ct-b">Rumor chains through close proximity</td><td class="ct-c">Territorial intelligence across faction domains</td></tr>
+      <tr><td class="ct-a">Consequence scope</td><td class="ct-b">Moment-to-moment: NPC death, route closure</td><td class="ct-c">Structural: Act 2 choices reshape Act 3 world</td></tr>
+      <tr><td class="ct-a">Engine</td><td class="ct-b">Unity · C# · top-down 2D/3D</td><td class="ct-c">Unreal Engine 4 · C++ / Blueprints · third-person</td></tr>
+      <tr><td class="ct-a">Primary validation</td><td class="ct-b">RQ1: information reliability → network structure</td><td class="ct-c">RQ4: framework generalises across social topologies</td></tr>
     </table>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Faction Architecture — Social Agent Groups</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Faction Architecture — Social Agent Groups</div></div>
 
     <div class="faction-grid">
-      <div class="faction-card">
-        <div class="faction-name">The Wolves</div>
-        <div class="faction-type">Trust: Territory-bound</div>
-        <div class="faction-desc">Share information freely within pack, withhold from all others. High intra-group reliability, near-zero inter-group. Models tight social trust with sharp external boundary.</div>
-      </div>
-      <div class="faction-card">
-        <div class="faction-name">The Pumas</div>
-        <div class="faction-type">Trust: Transactional</div>
-        <div class="faction-desc">Information exchanged for territorial access. Reliability is contingent on reciprocity. Models market-mediated trust — honest when it benefits them, misleading otherwise.</div>
-      </div>
-      <div class="faction-card">
-        <div class="faction-name">The Lions</div>
-        <div class="faction-type">Trust: Hierarchical</div>
-        <div class="faction-desc">Information flows downward accurately; upward information is filtered and aggrandised. Models how hierarchy distorts information reliability through social propagation.</div>
-      </div>
-      <div class="faction-card">
-        <div class="faction-name">Human Research</div>
-        <div class="faction-type">Trust: Observer</div>
-        <div class="faction-desc">Holds accurate environmental data but its own agenda — scientific access — shapes what it discloses. Models institutional information control as a reliability variable.</div>
-      </div>
+      <div class="faction-card"><div class="faction-name">The Wolves</div><div class="faction-type">Trust: Territory-bound</div><div class="faction-desc">Share information freely within pack, withhold from all others. High intra-group reliability, near-zero inter-group. Models tight social trust with sharp external boundary.</div></div>
+      <div class="faction-card"><div class="faction-name">The Pumas</div><div class="faction-type">Trust: Transactional</div><div class="faction-desc">Information exchanged for territorial access. Reliability is contingent on reciprocity. Models market-mediated trust — honest when it benefits them, misleading otherwise.</div></div>
+      <div class="faction-card"><div class="faction-name">The Lions</div><div class="faction-type">Trust: Hierarchical</div><div class="faction-desc">Information flows downward accurately; upward information is filtered and aggrandised. Models how hierarchy distorts information reliability through social propagation.</div></div>
+      <div class="faction-card"><div class="faction-name">Human Research</div><div class="faction-type">Trust: Observer</div><div class="faction-desc">Holds accurate environmental data but its own agenda — scientific access — shapes what it discloses. Models institutional information control as a reliability variable.</div></div>
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Research Variable Mapping</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Research Variable Mapping</div></div>
 
     <table class="var-table">
-      <tr>
-        <td class="vt-a">Inter-faction information gaps</td>
-        <td class="vt-b">Different factions hold incompatible information about shared territory. The player cannot verify without traversal. Models information reliability variance at the group level.</td>
-        <td class="vt-c badge-p1">Pillar I · RQ1</td>
-      </tr>
-      <tr>
-        <td class="vt-a">Faction trust accumulation</td>
-        <td class="vt-b">Trust built through side missions and sustained presence. Trust with one faction affects credibility with rivals. Models how group-level trust propagates and conflicts.</td>
-        <td class="vt-c badge-p2">Pillar II · RQ2</td>
-      </tr>
-      <tr>
-        <td class="vt-a">Act 2 → Act 3 consequence</td>
-        <td class="vt-b">Structural narrative bifurcation based on accumulated faction choices. Tests whether macro-scale irreversibility affects perceived narrative coherence differently than micro-scale.</td>
-        <td class="vt-c badge-p3">Pillar III · RQ3</td>
-      </tr>
-      <tr>
-        <td class="vt-a">Cross-engine framework layer</td>
-        <td class="vt-b">Agent simulation API runs identically under Unreal and Unity. This architectural constraint is a direct test of RQ4 — whether a parameterized framework predicts narrative coherence across implementations.</td>
-        <td class="vt-c badge-p1">RQ4</td>
-      </tr>
+      <tr><td class="vt-a">Inter-faction information gaps</td><td class="vt-b">Different factions hold incompatible information about shared territory. The player cannot verify without traversal. Models information reliability variance at the group level.</td><td class="vt-c badge-p1">Pillar I · RQ1</td></tr>
+      <tr><td class="vt-a">Faction trust accumulation</td><td class="vt-b">Trust built through side missions and sustained presence. Trust with one faction affects credibility with rivals. Models how group-level trust propagates and conflicts.</td><td class="vt-c badge-p2">Pillar II · RQ2</td></tr>
+      <tr><td class="vt-a">Act 2 → Act 3 consequence</td><td class="vt-b">Structural narrative bifurcation based on accumulated faction choices. Tests whether macro-scale irreversibility affects perceived narrative coherence differently than micro-scale.</td><td class="vt-c badge-p3">Pillar III · RQ3</td></tr>
+      <tr><td class="vt-a">Cross-engine framework layer</td><td class="vt-b">Agent simulation API designed to run identically under Unreal and Unity. A direct test of RQ4 — whether a parameterized framework predicts narrative coherence across implementations.</td><td class="vt-c badge-p1">RQ4</td></tr>
     </table>
 
     <div class="status-note">
@@ -609,20 +189,14 @@
       <div class="status-text">Untamed Shadows is designed as a research instrument; Unreal implementation is Phase 1 of the PhD. The design documentation above demonstrates that both environments have been methodologically specified — structural decisions, variable mappings, and cross-validation rationale are established before the PhD begins.</div>
     </div>
 
-    <div class="footer">
-      <div class="footer-l">Untamed Shadows · Research Environment II · Ritwik Sharma · April 2026</div>
-      <div class="footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:inherit;text-decoration:none;">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank" style="color:inherit;text-decoration:none;">GitHub: Zombita</a></div>
+    <div class="doc-footer">
+      <div class="doc-footer-l">Untamed Shadows · Research Environment II · Ritwik Sharma · April 2026</div>
+      <div class="doc-footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">GitHub: Zombita</a></div>
     </div>
 
   </div>
 </div>
 
-<script>
-function toggleNav() {
-  var nav = document.getElementById('mobileNav');
-  nav.classList.toggle('open');
-}
-</script>
-
+<script src="nav.js"></script>
 </body>
 </html>

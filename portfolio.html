@@ -6,182 +6,8 @@
 <title>Ritwik Sharma — Full Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-  :root {
-    --parchment: #f7f4ee;
-    --parchment-warm: #f0ebe0;
-    --ink: #1e1b16;
-    --ink-mid: #3a3528;
-    --ink-light: #6b6355;
-    --ink-faint: #9c9080;
-    --rule: #c8bfad;
-    --rule-light: #ddd6c6;
-    --scholar: #2c1810;
-    --scholar-mid: #4a2c1a;
-    --scholar-light: #f5ede5;
-    --scholar-border: #d4b896;
-    --margin-bg: #ede8de;
-    --p1: #1a4a2e; --p1-bg: #eef7f1; --p1-border: #a8d5b5;
-    --p2: #3b1f6e; --p2-bg: #f3f0fa; --p2-border: #c4b5e8;
-    --p3: #7a3010; --p3-bg: #fdf3ec; --p3-border: #e8c4a0;
-    --game: #1a3a4a; --game-bg: #eef4f7; --game-border: #a8c8d8;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  @page { size: A4; margin: 0; }
-
-  html, body {
-    background: var(--parchment);
-    color: var(--ink);
-    font-family: 'Source Serif 4', serif;
-    font-size: 10px;
-    line-height: 1.7;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
-    background: var(--parchment);
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    position: relative;
-  }
-
-  .page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--scholar);
-    z-index: 10;
-  }
-
-  .margin {
-    background: var(--margin-bg);
-    border-right: 1px solid var(--rule);
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .margin-label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--ink-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 8px 0;
-  }
-
-  .margin-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--rule); margin: 3px auto; }
-
-  .margin-section {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 10px 0;
-    font-weight: 500;
-  }
-
-  .content { padding: 24px 32px 24px 22px; }
-
-  .header {
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .header-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: end;
-  }
-
-  .name {
-    font-family: 'Spectral', serif;
-    font-size: 40px;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .name em { font-weight: 600; font-style: normal; }
-
-  .sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-top: 7px;
-  }
-
-  .header-note {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--ink-light);
-    padding-bottom: 3px;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5px;
-  }
-
-  .intro {
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    border-left: 3px solid var(--scholar);
-    padding: 11px 15px;
-    margin-bottom: 18px;
-  }
-
-  .intro-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  .intro-text {
-    font-family: 'Spectral', serif;
-    font-size: 11px;
-    font-style: italic;
-    color: var(--scholar);
-    line-height: 1.65;
-    font-weight: 300;
-  }
-
-  .sec { margin-top: 14px; margin-bottom: 10px; }
-  .sec-rule { height: 1px; background: var(--rule); margin-bottom: 6px; }
-  .sec-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    font-weight: 500;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .sec-title::before { content: '§'; color: var(--rule); font-size: 9px; font-weight: 300; }
-
-  /* Stats */
   .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -189,257 +15,63 @@
     border: 1px solid var(--rule);
     margin-bottom: 14px;
   }
-
-  .stat-cell { text-align: center; padding: 9px 6px; border-right: 1px solid var(--rule-light); }
+  .stat-cell {
+    text-align: center;
+    padding: 9px 6px;
+    border-right: 1px solid var(--rule-light);
+  }
   .stat-cell:last-child { border-right: none; }
+  .snum { font-family: 'Spectral', serif; font-size: 24px; color: var(--scholar); line-height: 1; margin-bottom: 3px; font-weight: 300; }
+  .slabel { font-family: 'JetBrains Mono', monospace; font-size: 6.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.4; }
 
-  .snum {
-    font-family: 'Spectral', serif;
-    font-size: 24px;
-    color: var(--scholar);
-    line-height: 1;
-    margin-bottom: 3px;
-    font-weight: 300;
-  }
-
-  .slabel {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    line-height: 1.4;
-  }
-
-  /* Game cards */
-  .game-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .game-card {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 2px solid var(--game);
-    padding: 9px 10px;
-  }
-
+  .game-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .game-card { background: var(--parchment-warm); border: 1px solid var(--rule); border-top: 2px solid var(--game); padding: 9px 10px; }
   .gc-title { font-size: 9.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
   .gc-meta { font-family: 'JetBrains Mono', monospace; font-size: 6.5px; color: var(--game); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
   .gc-desc { font-size: 8.5px; color: var(--ink-mid); line-height: 1.55; font-weight: 300; }
 
-  /* HTML5 block */
-  .html5-block {
-    background: var(--game-bg);
-    border: 1px solid var(--game-border);
-    border-left: 3px solid var(--game);
-    padding: 10px 14px;
-    margin-bottom: 12px;
-  }
-
-  .h5-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--game);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
+  .html5-block { background: var(--game-bg); border: 1px solid var(--game-border); border-left: 3px solid var(--game); padding: 10px 14px; margin-bottom: 12px; }
+  .h5-kicker { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--game); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin-bottom: 5px; }
   .h5-title { font-size: 10px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-
   .h5-body { font-size: 9px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; margin-bottom: 6px; }
-
   .chip-set { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: var(--ink-mid); background: var(--parchment-warm); border: 1px solid var(--rule); padding: 2px 7px; letter-spacing: 0.04em; }
 
-  .chip {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--ink-mid);
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    padding: 2px 7px;
-    letter-spacing: 0.04em;
-  }
-
-  /* Zombita mini */
-  .zombita-row {
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    border-top: 2px solid var(--scholar);
-    padding: 11px 14px;
-    margin-bottom: 12px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 16px;
-    align-items: center;
-  }
-
-  .zr-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .zr-title {
-    font-family: 'Spectral', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--scholar);
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-
+  .zombita-row { background: var(--scholar-light); border: 1px solid var(--scholar-border); border-top: 2px solid var(--scholar); padding: 11px 14px; margin-bottom: 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; }
+  .zr-label { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--scholar-mid); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+  .zr-title { font-family: 'Spectral', serif; font-size: 16px; font-weight: 600; color: var(--scholar); line-height: 1; margin-bottom: 3px; }
   .zr-body { font-size: 8.5px; color: var(--ink-mid); line-height: 1.55; font-weight: 300; }
-
   .zr-stats { display: flex; gap: 12px; }
-
   .zrs { text-align: center; }
   .zrsn { font-family: 'Spectral', serif; font-size: 18px; color: var(--scholar); line-height: 1; font-weight: 300; }
   .zrsl { font-family: 'JetBrains Mono', monospace; font-size: 6px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.4; }
 
-  /* Production systems */
-  .prod-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .prod-card {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 2px solid var(--scholar-mid);
-    padding: 9px 10px;
-  }
-
+  .prod-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .prod-card { background: var(--parchment-warm); border: 1px solid var(--rule); border-top: 2px solid var(--scholar-mid); padding: 9px 10px; }
   .pc-title { font-size: 9.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
   .pc-meta { font-family: 'JetBrains Mono', monospace; font-size: 6.5px; color: var(--scholar-mid); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
   .pc-desc { font-size: 8.5px; color: var(--ink-mid); line-height: 1.55; font-weight: 300; }
 
-  .footer {
-    margin-top: 14px;
-    padding-top: 9px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  @media (max-width: 680px) {
+    .snum { font-size: 20px; }
+    .slabel { font-size: 8px; }
+    .gc-title { font-size: 13px; }
+    .gc-meta { font-size: 9px; }
+    .gc-desc { font-size: 12px; }
+    .h5-title { font-size: 14px; }
+    .h5-body { font-size: 12px; }
+    .zr-title { font-size: 20px; }
+    .zr-body { font-size: 12px; }
+    .zrsn { font-size: 22px; }
+    .zrsl { font-size: 9px; }
+    .pc-title { font-size: 13px; }
+    .pc-meta { font-size: 9px; }
+    .pc-desc { font-size: 12px; }
   }
-
-  .footer-l { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--ink-faint); letter-spacing: 0.1em; }
-  .footer-r { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--scholar-mid); letter-spacing: 0.08em; }
-
-  /* ── SITE NAV ── */
-  .site-nav {
-    background: #2c1810;
-    border-bottom: 2px solid #4a2c1a;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 44px;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #d4b896;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    justify-content: flex-end;
-  }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 9px;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.active { color: #fff; border-bottom: 2px solid #d4b896; }
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #d4b896;
-  }
-  .nav-mobile {
-    display: none;
-    background: #2c1810;
-    border-bottom: 1px solid #4a2c1a;
-    flex-direction: column;
-    padding: 8px 0;
-    position: sticky;
-    top: 44px;
-    z-index: 99;
-  }
-  .nav-mobile a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 24px;
-    display: block;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .nav-mobile a.active { color: #fff; }
-  .nav-mobile a:last-child { border-bottom: none; }
-  .nav-mobile.open { display: flex; }
-  @media (max-width: 700px) {
-    .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-  }
-
-
-  /* ── MOBILE A4 OVERRIDE ── */
-  @media (max-width: 700px) {
-    .page {
-      width: 100% !important;
-      min-height: unset !important;
-      grid-template-columns: 0 1fr !important;
-    }
-    .margin { display: none !important; }
-    .content { padding: 20px 16px !important; }
-  }
-
 </style>
 </head>
 <body>
 
-<!-- SITE NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-brand">Ritwik Sharma</a>
   <div class="nav-links">
@@ -455,15 +87,15 @@
   </button>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-    <a href="index.html">Home</a>
-    <a href="cv.html">CV</a>
-    <a href="portfolio.html" class="active">Portfolio</a>
-    <a href="zombita.html">Zombita</a>
-    <a href="prison-sandbox.html">Prison Sandbox</a>
-    <a href="untamed-shadows.html">Untamed Shadows</a>
+  <a href="index.html">Home</a>
+  <a href="cv.html">CV</a>
+  <a href="portfolio.html" class="active">Portfolio</a>
+  <a href="zombita.html">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html">Untamed Shadows</a>
 </div>
-<div class="page">
 
+<div class="page">
   <div class="margin">
     <div class="margin-label">Full Portfolio</div>
     <div class="margin-dot"></div>
@@ -476,13 +108,13 @@
 
   <div class="content">
 
-    <div class="header">
-      <div class="header-inner">
+    <div class="doc-header">
+      <div class="doc-header-inner">
         <div>
-          <div class="name">Ritwik <em>Sharma</em></div>
-          <div class="sub">Full Portfolio · Game Developer · Systems Engineer · Researcher</div>
+          <div class="doc-name">Ritwik <em>Sharma</em></div>
+          <div class="doc-designation">Full Portfolio · Game Developer · Systems Engineer · Researcher</div>
         </div>
-        <div class="header-note">
+        <div class="doc-contact">
           <div><a href="mailto:ritwiksharma097@gmail.com">ritwiksharma097@gmail.com</a></div>
           <div>+91 94623 32146</div>
           <div>April 2026</div>
@@ -490,38 +122,19 @@
       </div>
     </div>
 
-    <div class="intro">
-      <div class="intro-kicker">Portfolio Context — PhD Research Application</div>
-      <div class="intro-text">
-        Seven years of independent development, 200+ shipped games, production multi-agent systems, and international client deployments. This portfolio is not presented as a games industry application — it is presented as evidence that the PhD research proposal's implementation claims are grounded in a real track record of building exactly the systems the research requires.
-      </div>
+    <div class="context-block">
+      <div class="ctx-kicker">Portfolio Context — PhD Research Application</div>
+      <div class="ctx-text">Seven years of independent development, 200+ shipped games, production multi-agent systems, and international client deployments. This portfolio is presented as evidence that the PhD research proposal's implementation claims are grounded in a real track record of building exactly the systems the research requires.</div>
     </div>
 
-    <!-- STATS -->
     <div class="stats">
-      <div class="stat-cell">
-        <div class="snum">200+</div>
-        <div class="slabel">Games shipped, all platforms</div>
-      </div>
-      <div class="stat-cell">
-        <div class="snum">7+</div>
-        <div class="slabel">Years Unity development</div>
-      </div>
-      <div class="stat-cell">
-        <div class="snum">3</div>
-        <div class="slabel">Game engines: Unity · Unreal · Construct3</div>
-      </div>
-      <div class="stat-cell">
-        <div class="snum">4+</div>
-        <div class="slabel">Countries, client deployments</div>
-      </div>
+      <div class="stat-cell"><div class="snum">200+</div><div class="slabel">Games shipped, all platforms</div></div>
+      <div class="stat-cell"><div class="snum">7+</div><div class="slabel">Years Unity development</div></div>
+      <div class="stat-cell"><div class="snum">3</div><div class="slabel">Game engines: Unity · Unreal · Construct3</div></div>
+      <div class="stat-cell"><div class="snum">4+</div><div class="slabel">Countries, client deployments</div></div>
     </div>
 
-    <!-- GAME DEVELOPMENT -->
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Part I — Game Development (2018–Present)</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Part I — Game Development (2018–Present)</div></div>
 
     <div class="html5-block">
       <div class="h5-kicker">HTML5 Suite · Construct3 · JavaScript · 100+ Titles</div>
@@ -533,43 +146,15 @@
     </div>
 
     <div class="game-grid">
-      <div class="game-card">
-        <div class="gc-title">VR Cricket</div>
-        <div class="gc-meta">Unity · HTC Vive</div>
-        <div class="gc-desc">Full VR cricket with motion-controlled batting and stadium environment. Live event deployment. Production Unity VR — same engine as Prison Sandbox.</div>
-      </div>
-      <div class="game-card">
-        <div class="gc-title">AR — Audi Motors</div>
-        <div class="gc-meta">Unity · Vuforia</div>
-        <div class="gc-desc">Marker-based AR: scan physical tags to surface 3D car models and feature information. Live client deployment. Unity AR pipeline in production.</div>
-      </div>
-      <div class="game-card">
-        <div class="gc-title">Physical Installations</div>
-        <div class="gc-meta">Unity · Kinect · Arduino</div>
-        <div class="gc-desc">Batak, Peddle-to-Cycle, Beat Saber replica — all Unity 3D with custom hardware I/O. Physical agent-reactive environments at scale.</div>
-      </div>
-      <div class="game-card">
-        <div class="gc-title">Space AR</div>
-        <div class="gc-meta">React · WebXR</div>
-        <div class="gc-desc">Planet-scanning AR: scan objects mapped to planets, surface information overlays. Engine-agnostic AR thinking — reinforces the cross-platform framework design.</div>
-      </div>
-      <div class="game-card">
-        <div class="gc-title">AI Photobooths</div>
-        <div class="gc-meta">Unity / React · Stable Diffusion</div>
-        <div class="gc-desc">Physical AI installations: real-time face/background replacement at events. Cadbury, Adani, ICICI Bank, Monkey Shoulder. Production AI pipeline in physical interactive contexts.</div>
-      </div>
-      <div class="game-card">
-        <div class="gc-title">VR Roller Coaster / Jeep</div>
-        <div class="gc-meta">Unity · Meta Quest / HTC Vive</div>
-        <div class="gc-desc">Immersive VR experiences deployed at events: roller coaster and off-road jeep rides. Demonstrates full Unity VR production pipeline for experiential deployments.</div>
-      </div>
+      <div class="game-card"><div class="gc-title">VR Cricket</div><div class="gc-meta">Unity · HTC Vive</div><div class="gc-desc">Full VR cricket with motion-controlled batting and stadium environment. Live event deployment. Production Unity VR — same engine as Prison Sandbox.</div></div>
+      <div class="game-card"><div class="gc-title">AR — Audi Motors</div><div class="gc-meta">Unity · Vuforia</div><div class="gc-desc">Marker-based AR: scan physical tags to surface 3D car models and feature information. Live client deployment. Unity AR pipeline in production.</div></div>
+      <div class="game-card"><div class="gc-title">Physical Installations</div><div class="gc-meta">Unity · Kinect · Arduino</div><div class="gc-desc">Batak, Peddle-to-Cycle, Beat Saber replica — all Unity 3D with custom hardware I/O. Physical agent-reactive environments at scale.</div></div>
+      <div class="game-card"><div class="gc-title">Space AR</div><div class="gc-meta">React · WebXR</div><div class="gc-desc">Planet-scanning AR: scan objects mapped to planets, surface information overlays. Engine-agnostic AR thinking — reinforces the cross-platform framework design.</div></div>
+      <div class="game-card"><div class="gc-title">AI Photobooths</div><div class="gc-meta">Unity / React · Stable Diffusion</div><div class="gc-desc">Physical AI installations: real-time face/background replacement at events. Cadbury, Adani, ICICI Bank, Monkey Shoulder. Production AI pipeline in physical interactive contexts.</div></div>
+      <div class="game-card"><div class="gc-title">VR Roller Coaster / Jeep</div><div class="gc-meta">Unity · Meta Quest / HTC Vive</div><div class="gc-desc">Immersive VR experiences deployed at events: roller coaster and off-road jeep rides. Full Unity VR production pipeline for experiential deployments.</div></div>
     </div>
 
-    <!-- ZOMBITA -->
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Part II — Zombita · Research System (Primary)</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Part II — Zombita · Research System (Primary)</div></div>
 
     <div class="zombita-row">
       <div>
@@ -581,48 +166,26 @@
       <div class="zr-stats">
         <div class="zrs"><div class="zrsn">4</div><div class="zrsl">Memory layers</div></div>
         <div class="zrs"><div class="zrsn">30+</div><div class="zrsl">DB tables</div></div>
-        <div class="zrs"><div class="zrsn">165</div><div class="zrsl">Doc pages</div></div>
+        <div class="zrs"><div class="zrsn">136</div><div class="zrsl">Doc pages</div></div>
       </div>
     </div>
 
-    <!-- PRODUCTION SYSTEMS -->
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Part III — Production Systems</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Part III — Production Systems</div></div>
 
     <div class="prod-grid">
-      <div class="prod-card">
-        <div class="pc-title">NEOM Sindalah</div>
-        <div class="pc-meta">TouchDesigner · Saudi Arabia</div>
-        <div class="pc-desc">LED tower control system for NEOM's Sindalah island. Live infrastructure deployment, international client. NESMA protocol, real-time generative visual control.</div>
-      </div>
-      <div class="prod-card">
-        <div class="pc-title">ClaimBridge</div>
-        <div class="pc-meta">Python · FastAPI · PostgreSQL</div>
-        <div class="pc-desc">Healthcare insurance claims platform for PM-JAY and Rajasthan MAA. Full-stack production system with document processing and audit logging.</div>
-      </div>
-      <div class="prod-card">
-        <div class="pc-title">Relay</div>
-        <div class="pc-meta">Python · Real-time · Multi-channel</div>
-        <div class="pc-desc">Multi-channel business operations platform. API-first architecture, notification routing, workflow automation, cross-system synchronisation.</div>
-      </div>
+      <div class="prod-card"><div class="pc-title">NEOM Sindalah</div><div class="pc-meta">TouchDesigner · Saudi Arabia</div><div class="pc-desc">LED tower control system for NEOM's Sindalah island. Live infrastructure deployment, international client. NESMA protocol, real-time generative visual control.</div></div>
+      <div class="prod-card"><div class="pc-title">ClaimBridge</div><div class="pc-meta">Python · FastAPI · PostgreSQL</div><div class="pc-desc">Healthcare insurance claims platform for PM-JAY and Rajasthan MAA. Full-stack production system with document processing and audit logging.</div></div>
+      <div class="prod-card"><div class="pc-title">Relay</div><div class="pc-meta">Python · Real-time · Multi-channel</div><div class="pc-desc">Multi-channel business operations platform. API-first architecture, notification routing, workflow automation, cross-system synchronisation.</div></div>
     </div>
 
-    <div class="footer">
-      <div class="footer-l">Ritwik Sharma · Full Portfolio · April 2026</div>
-      <div class="footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:inherit;text-decoration:none;">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank" style="color:inherit;text-decoration:none;">GitHub: Zombita</a></div>
+    <div class="doc-footer">
+      <div class="doc-footer-l">Ritwik Sharma · Full Portfolio · April 2026</div>
+      <div class="doc-footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">GitHub: Zombita</a></div>
     </div>
 
   </div>
 </div>
 
-<script>
-function toggleNav() {
-  var nav = document.getElementById('mobileNav');
-  nav.classList.toggle('open');
-}
-</script>
-
+<script src="nav.js"></script>
 </body>
 </html>

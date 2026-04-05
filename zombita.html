@@ -6,523 +6,55 @@
 <title>Zombita — Research Implementation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-  :root {
-    --parchment: #f7f4ee;
-    --parchment-warm: #f0ebe0;
-    --parchment-deep: #e8e0d0;
-    --ink: #1e1b16;
-    --ink-mid: #3a3528;
-    --ink-light: #6b6355;
-    --ink-faint: #9c9080;
-    --rule: #c8bfad;
-    --rule-light: #ddd6c6;
-    --scholar: #2c1810;
-    --scholar-mid: #4a2c1a;
-    --scholar-light: #f5ede5;
-    --scholar-border: #d4b896;
-    --margin-bg: #ede8de;
-    --p1: #1a4a2e;
-    --p1-bg: #eef7f1;
-    --p1-border: #a8d5b5;
-    --p2: #3b1f6e;
-    --p2-bg: #f3f0fa;
-    --p2-border: #c4b5e8;
-    --p3: #7a3010;
-    --p3-bg: #fdf3ec;
-    --p3-border: #e8c4a0;
-  }
+  .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .zp { padding: 12px 13px; border: 1px solid; }
+  .zp.p1 { background: var(--p1-bg); border-color: var(--p1-border); }
+  .zp.p2 { background: var(--p2-bg); border-color: var(--p2-border); }
+  .zp.p3 { background: var(--p3-bg); border-color: var(--p3-border); }
+  .pnum { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; margin-bottom: 4px; }
+  .zp.p1 .pnum { color: var(--p1); }
+  .zp.p2 .pnum { color: var(--p2); }
+  .zp.p3 .pnum { color: var(--p3); }
+  .ptitle { font-family: 'Source Serif 4', serif; font-size: 10px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.35; }
+  .prq { font-family: 'Spectral', serif; font-size: 8.5px; color: var(--ink-light); font-style: italic; margin-bottom: 6px; line-height: 1.45; }
+  .pimpl-label { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.1em; font-weight: 500; margin-bottom: 3px; }
+  .zp.p1 .pimpl-label { color: var(--p1); }
+  .zp.p2 .pimpl-label { color: var(--p2); }
+  .zp.p3 .pimpl-label { color: var(--p3); }
+  .pimpl { font-size: 8.5px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  @page { size: A4; margin: 0; }
-
-  html, body {
-    background: var(--parchment);
-    color: var(--ink);
-    font-family: 'Source Serif 4', serif;
-    font-size: 10px;
-    line-height: 1.7;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
-    background: var(--parchment);
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    position: relative;
-  }
-
-  .page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--scholar);
-    z-index: 10;
-  }
-
-  .margin {
-    background: var(--margin-bg);
-    border-right: 1px solid var(--rule);
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .margin-label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--ink-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 8px 0;
-  }
-
-  .margin-dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--rule);
-    margin: 3px auto;
-  }
-
-  .margin-section {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 10px 0;
-    font-weight: 500;
-  }
-
-  .content {
-    padding: 24px 32px 24px 22px;
-  }
-
-  .header {
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .header-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: end;
-  }
-
-  .title {
-    font-family: 'Spectral', serif;
-    font-size: 42px;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .title em { font-weight: 600; font-style: normal; }
-
-  .sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-top: 7px;
-  }
-
-  .meta-col {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    text-align: right;
-    padding-bottom: 3px;
-  }
-
-  .meta-line {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--ink-light);
-  }
-
-  .meta-line span { color: var(--ink-mid); font-weight: 500; }
-
-  /* ── CONTEXT ── */
-  .context {
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    border-left: 3px solid var(--scholar);
-    padding: 11px 15px;
-    margin-bottom: 18px;
-  }
-
-  .ctx-kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  .ctx-text {
-    font-family: 'Spectral', serif;
-    font-size: 11px;
-    font-style: italic;
-    color: var(--scholar);
-    line-height: 1.65;
-    font-weight: 300;
-  }
-
-  /* ── SECTION HEADERS ── */
-  .sec {
-    margin-top: 16px;
-    margin-bottom: 11px;
-  }
-
-  .sec-rule { height: 1px; background: var(--rule); margin-bottom: 6px; }
-
-  .sec-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    font-weight: 500;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .sec-title::before {
-    content: '§';
-    color: var(--rule);
-    font-size: 9px;
-    font-weight: 300;
-  }
-
-  /* ── PILLAR GRID ── */
-  .pillars {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .pillar {
-    padding: 12px 13px;
-    border: 1px solid;
-  }
-
-  .p1 { background: var(--p1-bg); border-color: var(--p1-border); }
-  .p2 { background: var(--p2-bg); border-color: var(--p2-border); }
-  .p3 { background: var(--p3-bg); border-color: var(--p3-border); }
-
-  .pnum {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-
-  .p1 .pnum { color: var(--p1); }
-  .p2 .pnum { color: var(--p2); }
-  .p3 .pnum { color: var(--p3); }
-
-  .ptitle {
-    font-family: 'Source Serif 4', serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 4px;
-    line-height: 1.35;
-  }
-
-  .prq {
-    font-family: 'Spectral', serif;
-    font-size: 8.5px;
-    color: var(--ink-light);
-    font-style: italic;
-    margin-bottom: 6px;
-    line-height: 1.45;
-  }
-
-  .pimpl-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 0.1em;
-    font-weight: 500;
-    margin-bottom: 3px;
-  }
-
-  .p1 .pimpl-label { color: var(--p1); }
-  .p2 .pimpl-label { color: var(--p2); }
-  .p3 .pimpl-label { color: var(--p3); }
-
-  .pimpl {
-    font-size: 8.5px;
-    color: var(--ink-mid);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── SCALE STRIP ── */
-  .scale {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    margin-bottom: 16px;
-  }
-
-  .scale-cell {
-    text-align: center;
-    padding: 10px 6px;
-    border-right: 1px solid var(--rule-light);
-  }
-
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--parchment-warm); border: 1px solid var(--rule); margin-bottom: 16px; }
+  .scale-cell { text-align: center; padding: 10px 6px; border-right: 1px solid var(--rule-light); }
   .scale-cell:last-child { border-right: none; }
+  .snum { font-family: 'Spectral', serif; font-size: 26px; color: var(--scholar); line-height: 1; margin-bottom: 3px; font-weight: 300; }
+  .slabel { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.45; }
 
-  .snum {
-    font-family: 'Spectral', serif;
-    font-size: 26px;
-    color: var(--scholar);
-    line-height: 1;
-    margin-bottom: 3px;
-    font-weight: 300;
-  }
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .comp { background: var(--parchment-warm); border: 1px solid var(--rule); border-top: 2px solid var(--scholar); padding: 11px 13px; }
+  .comp-title { font-size: 10px; font-weight: 600; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .comp-badge { font-family: 'JetBrains Mono', monospace; font-size: 6.5px; color: var(--scholar-mid); background: var(--scholar-light); border: 1px solid var(--scholar-border); padding: 1px 5px; letter-spacing: 0.06em; font-weight: 400; }
+  .comp-desc { font-size: 9px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; margin-bottom: 5px; }
+  .comp-spec { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: var(--ink-light); background: var(--parchment); border: 1px solid var(--rule-light); padding: 4px 8px; line-height: 1.5; }
 
-  .slabel {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    line-height: 1.45;
+  @media (max-width: 680px) {
+    .pillars-grid { grid-template-columns: 1fr; }
+    .pnum { font-size: 10px; }
+    .ptitle { font-size: 14px; }
+    .prq { font-size: 12px; }
+    .pimpl-label { font-size: 10px; }
+    .pimpl { font-size: 12px; }
+    .snum { font-size: 22px; }
+    .slabel { font-size: 8px; }
+    .comp-title { font-size: 14px; }
+    .comp-desc { font-size: 12px; }
+    .comp-spec { font-size: 10px; }
   }
-
-  /* ── COMPONENTS ── */
-  .comp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .comp {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    border-top: 2px solid var(--scholar);
-    padding: 11px 13px;
-  }
-
-  .comp-title {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .comp-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5px;
-    color: var(--scholar-mid);
-    background: var(--scholar-light);
-    border: 1px solid var(--scholar-border);
-    padding: 1px 5px;
-    letter-spacing: 0.06em;
-    font-weight: 400;
-  }
-
-  .comp-desc {
-    font-size: 9px;
-    color: var(--ink-mid);
-    line-height: 1.6;
-    font-weight: 300;
-    margin-bottom: 5px;
-  }
-
-  .comp-spec {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    color: var(--ink-light);
-    background: var(--parchment);
-    border: 1px solid var(--rule-light);
-    padding: 4px 8px;
-    line-height: 1.5;
-  }
-
-  /* ── FORMULA ── */
-  .formula-block {
-    background: var(--parchment-warm);
-    border: 1px solid var(--rule);
-    padding: 9px 14px;
-    margin-top: 10px;
-  }
-
-  .formula-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    margin-bottom: 5px;
-  }
-
-  .formula {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
-    color: var(--ink);
-    letter-spacing: 0.04em;
-  }
-
-  .formula span { color: var(--scholar-mid); font-weight: 500; }
-
-  /* ── FOOTER ── */
-  .footer {
-    margin-top: 14px;
-    padding-top: 9px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--ink-faint);
-    letter-spacing: 0.1em;
-  }
-
-  .footer-r {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--scholar-mid);
-    letter-spacing: 0.08em;
-  }
-
-  /* ── SITE NAV ── */
-  .site-nav {
-    background: #2c1810;
-    border-bottom: 2px solid #4a2c1a;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 44px;
-  }
-  .nav-brand {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #d4b896;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    justify-content: flex-end;
-  }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 9px;
-    transition: color 0.15s;
-    white-space: nowrap;
-  }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.active { color: #fff; border-bottom: 2px solid #d4b896; }
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #d4b896;
-  }
-  .nav-mobile {
-    display: none;
-    background: #2c1810;
-    border-bottom: 1px solid #4a2c1a;
-    flex-direction: column;
-    padding: 8px 0;
-    position: sticky;
-    top: 44px;
-    z-index: 99;
-  }
-  .nav-mobile a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #c8b89a;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 12px 24px;
-    display: block;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .nav-mobile a.active { color: #fff; }
-  .nav-mobile a:last-child { border-bottom: none; }
-  .nav-mobile.open { display: flex; }
-  @media (max-width: 700px) {
-    .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-  }
-
-
-  /* ── MOBILE A4 OVERRIDE ── */
-  @media (max-width: 700px) {
-    .page {
-      width: 100% !important;
-      min-height: unset !important;
-      grid-template-columns: 0 1fr !important;
-    }
-    .margin { display: none !important; }
-    .content { padding: 20px 16px !important; }
-  }
-
 </style>
 </head>
 <body>
 
-<!-- SITE NAV -->
 <nav class="site-nav">
   <a href="index.html" class="nav-brand">Ritwik Sharma</a>
   <div class="nav-links">
@@ -538,15 +70,15 @@
   </button>
 </nav>
 <div class="nav-mobile" id="mobileNav">
-    <a href="index.html">Home</a>
-    <a href="cv.html">CV</a>
-    <a href="portfolio.html">Portfolio</a>
-    <a href="zombita.html" class="active">Zombita</a>
-    <a href="prison-sandbox.html">Prison Sandbox</a>
-    <a href="untamed-shadows.html">Untamed Shadows</a>
+  <a href="index.html">Home</a>
+  <a href="cv.html">CV</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="zombita.html" class="active">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html">Untamed Shadows</a>
 </div>
-<div class="page">
 
+<div class="page">
   <div class="margin">
     <div class="margin-label">Research System</div>
     <div class="margin-dot"></div>
@@ -559,144 +91,102 @@
 
   <div class="content">
 
-    <div class="header">
-      <div class="header-inner">
+    <div class="doc-header">
+      <div class="doc-header-inner">
         <div>
-          <div class="title"><em>Zombita</em></div>
-          <div class="sub">Research Implementation · Production Multi-Agent Platform · Ritwik Sharma</div>
+          <div class="doc-title"><em>Zombita</em></div>
+          <div class="doc-sub">Research Implementation · Production Multi-Agent Platform · Ritwik Sharma</div>
         </div>
         <div class="meta-col">
           <div class="meta-line">Developer <span>Ritwik Sharma</span></div>
           <div class="meta-line">Status <span>Production · 2024–ongoing</span></div>
           <div class="meta-line">Stack <span>Python · PostgreSQL · Next.js · Lua</span></div>
           <div class="meta-line">Context <span>Discord · Web · Game Server (RCON)</span></div>
-          <div class="meta-line">Repository <span><a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank" style="color:var(--p1);text-decoration:none;font-weight:500;">github.com/Ritwiksharma097/Zombita-PhD</a></span></div>
-          <div class="meta-line">Site <span><a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:var(--scholar-mid);text-decoration:none;">ritwiksharma-phd.pages.dev</a></span></div>
-          <div class="meta-line">Documentation <span><a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="color:var(--p1);text-decoration:none;font-weight:500;">Read Full Documentation (136 pages) →</a></span></div>
+          <div class="meta-line">Repository <span><a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">github.com/Ritwiksharma097/Zombita-PhD</a></span></div>
+          <div class="meta-line">Documentation <span><a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link" target="_blank">Read Full Docs (136 pages) →</a></span></div>
         </div>
       </div>
     </div>
 
-
-    <div style="margin: 0 0 2rem 0; padding: 1rem 1.4rem; background: rgba(255,255,255,0.03); border-left: 3px solid #c8a84b; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
-      <div style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:#888;">Full Documentation Available</div>
-      <a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link&ouid=107530738408381574557&rtpof=true&sd=true" target="_blank" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#c8a84b; text-decoration:none; font-weight:600; letter-spacing:0.04em; border:1px solid #c8a84b; padding:0.4rem 1rem; transition:all 0.2s;" onmouseover="this.style.background='#c8a84b';this.style.color='#0a0a0a'" onmouseout="this.style.background='transparent';this.style.color='#c8a84b'">Read Complete Technical Documentation (136 pages) →</a>
+    <div class="doc-banner" style="border-color:#c8a84b;">
+      <div class="doc-banner-label">Full Documentation Available</div>
+      <a href="https://docs.google.com/document/d/1iBRQ1GAiwaiNtqzej_oCIdnx26S_KK9s/edit?usp=drive_link" target="_blank" class="doc-banner-link" style="color:#c8a84b;border-color:#c8a84b;" onmouseover="this.style.background='#c8a84b';this.style.color='#0a0a0a'" onmouseout="this.style.background='transparent';this.style.color='#c8a84b'">Read Complete Technical Documentation (136 pages) →</a>
     </div>
-    <div class="context">
+
+    <div class="context-block">
       <div class="ctx-kicker">Research Context</div>
-      <div class="ctx-text">
-        Zombita is the production system underlying the PhD research proposal on emergent narrative in multi-agent systems. It was not built to demonstrate the research — it was built independently, and the research question emerged from observing what it already did. The three research pillars map directly onto architectural decisions made before any formal research framing existed.
-      </div>
+      <div class="ctx-text">Zombita is the production system underlying the PhD research proposal on emergent narrative in multi-agent systems. It was not built to demonstrate the research — it was built independently, and the research question emerged from observing what it already did. The three research pillars map directly onto architectural decisions made before any formal research framing existed.</div>
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Research Pillar Mapping — Implementation to Proposal</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Research Pillar Mapping — Implementation to Proposal</div></div>
 
-    <div class="pillars">
-
-      <div class="pillar p1">
+    <div class="pillars-grid">
+      <div class="zp p1">
         <div class="pnum">Pillar I</div>
         <div class="ptitle">Epistemic State Modeling &amp; Information Reliability</div>
         <div class="prq">RQ1 &amp; RQ2: How does information reliability variance affect emergent social network structure?</div>
         <div class="pimpl-label">Implementation in Zombita</div>
         <div class="pimpl">4-layer memory architecture where each layer has distinct reliability and TTL characteristics: channel buffers (30-message RAM deque), user buffers (cross-channel awareness), conversation history (48hr TTL), and persistent reputation store (PostgreSQL). Each agent accesses different information states — partial information instantiated as a structural property, not a parameter.</div>
       </div>
-
-      <div class="pillar p2">
+      <div class="zp p2">
         <div class="pnum">Pillar II</div>
         <div class="ptitle">Trust Modeling &amp; Social Structure Propagation</div>
         <div class="prq">RQ2: What trust mechanisms are necessary for socially coherent emergent behavior?</div>
         <div class="pimpl-label">Implementation in Zombita</div>
         <div class="pimpl">Nightly reputation pipeline reads 7 days of behavioral event logs per active user and generates a personality archetype and written AI opinion stored in PostgreSQL. Agent behavior modifies its reputation state, which modifies how the system interacts with it in subsequent cycles. Social structure emerges from behavioral history, not authored profiles.</div>
       </div>
-
-      <div class="pillar p3">
+      <div class="zp p3">
         <div class="pnum">Pillar III</div>
         <div class="ptitle">Consequence Permanence &amp; Narrative Weight</div>
         <div class="prq">RQ3: How does irreversibility interact with information reliability to affect narrative quality?</div>
         <div class="pimpl-label">Implementation in Zombita</div>
-        <div class="pimpl">Three distinct permanence mechanisms in production: 40% of every shop transaction permanently burned; debt tracked per player, never resets; session-scoped economic data never deleted. The NPC campaign framework tracks player choices with UUID-based identity persistence — choices alter available dialogue irreversibly. Consequence permanence as a felt constraint, not a design statement.</div>
+        <div class="pimpl">Three distinct permanence mechanisms in production: 40% of every shop transaction permanently burned; debt tracked per player, never resets; session-scoped economic data never deleted. The NPC campaign framework tracks player choices with UUID-based identity persistence — choices alter available dialogue irreversibly.</div>
       </div>
-
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">System Scale — Production Evidence</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">System Scale — Production Evidence</div></div>
 
     <div class="scale">
-      <div class="scale-cell">
-        <div class="snum">4</div>
-        <div class="slabel">Memory layers, distinct reliability</div>
-      </div>
-      <div class="scale-cell">
-        <div class="snum">4</div>
-        <div class="slabel">Concurrent AI pipelines, dual-model</div>
-      </div>
-      <div class="scale-cell">
-        <div class="snum">9</div>
-        <div class="slabel">Custom Lua mods, production deployed</div>
-      </div>
-      <div class="scale-cell">
-        <div class="snum">30+</div>
-        <div class="slabel">PostgreSQL tables, designed from scratch</div>
-      </div>
-      <div class="scale-cell">
-        <div class="snum">136</div>
-        <div class="slabel">Pages of technical documentation</div>
-      </div>
+      <div class="scale-cell"><div class="snum">4</div><div class="slabel">Memory layers, distinct reliability</div></div>
+      <div class="scale-cell"><div class="snum">4</div><div class="slabel">Concurrent AI pipelines, dual-model</div></div>
+      <div class="scale-cell"><div class="snum">9</div><div class="slabel">Custom Lua mods, production deployed</div></div>
+      <div class="scale-cell"><div class="snum">30+</div><div class="slabel">PostgreSQL tables, designed from scratch</div></div>
+      <div class="scale-cell"><div class="snum">136</div><div class="slabel">Pages of technical documentation</div></div>
     </div>
 
-    <div class="sec">
-      <div class="sec-rule"></div>
-      <div class="sec-title">Key Architectural Components</div>
-    </div>
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Key Architectural Components</div></div>
 
     <div class="comp-grid">
-
       <div class="comp">
         <div class="comp-title">Economy Engine — Emergent Pricing <span class="comp-badge">Pillars I · III</span></div>
         <div class="comp-desc">Closed-loop financial simulation where prices emerge from four compounding factors without admin intervention. Demonstrates emergent economic behavior driven entirely by agent interaction patterns — the same mechanism the PhD framework applies to social narrative.</div>
         <div class="comp-spec">Price = Base × Treasury × Demand × Wealth × Recession<br>40% permanent burn · 5-state treasury machine · self-correcting loop</div>
       </div>
-
       <div class="comp">
         <div class="comp-title">NPC Campaign Framework <span class="comp-badge">Pillars I · II</span></div>
         <div class="comp-desc">Named agents with UUID-based identity persistence across system restarts. Scripted multi-line dialogue with persistent player choice tracking written to PostgreSQL. Group membership gating. The working agent architecture the PhD proposal formalises and extends.</div>
         <div class="comp-spec">9 named NPC agents · persistent UUID identity · choice history in DB · group-gated interaction</div>
       </div>
-
       <div class="comp">
         <div class="comp-title">Reputation Pipeline — Behavioral Archetypes <span class="comp-badge">Pillar II</span></div>
         <div class="comp-desc">Nightly batch process reads 7 days of event logs per active user and generates a personality archetype and written AI opinion stored per player in PostgreSQL. Production implementation of trust propagation from behavioral signal — without direct self-reporting or authored profiles.</div>
         <div class="comp-spec">7-day event window · GPT-4o-mini batch · archetype + written opinion · surfaced on web profile</div>
       </div>
-
       <div class="comp">
         <div class="comp-title">AI Architecture — Dual-Model Design <span class="comp-badge">Pillar I</span></div>
         <div class="comp-desc">Four concurrent pipelines using two models: GPT-4o-mini for high-value low-frequency interactions; Qwen3 8B local inference for high-frequency passive perception. Per-model memory scope differs — instantiating the partial information architecture at the AI layer itself.</div>
         <div class="comp-spec">Cloud: full personality context, 15-msg history, 48hr TTL · Local: silent failure by design</div>
       </div>
-
     </div>
 
-    <div class="footer">
-      <div class="footer-l">Zombita · Research Implementation · Ritwik Sharma · April 2026</div>
-      <div class="footer-r"><a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank" style="color:var(--scholar-border);text-decoration:none;">github.com/Ritwiksharma097/Zombita-PhD</a> &nbsp;·&nbsp; <a href="https://ritwiksharma-phd.pages.dev/" target="_blank" style="color:var(--scholar-border);text-decoration:none;">ritwiksharma-phd.pages.dev</a></div>
+    <div class="doc-footer">
+      <div class="doc-footer-l">Zombita · Research Implementation · Ritwik Sharma · April 2026</div>
+      <div class="doc-footer-r"><a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">github.com/Ritwiksharma097/Zombita-PhD</a> &nbsp;·&nbsp; <a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a></div>
     </div>
 
   </div>
 </div>
 
-<script>
-function toggleNav() {
-  var nav = document.getElementById('mobileNav');
-  nav.classList.toggle('open');
-}
-</script>
-
+<script src="nav.js"></script>
 </body>
 </html>
