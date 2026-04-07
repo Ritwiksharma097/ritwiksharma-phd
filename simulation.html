@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prison Sandbox — Agent Simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0e11;--surface:#13151a;--surface2:#1c1f27;--surface3:#242831;
+  --border:#2a2d38;--border2:#363a48;
+  --text:#e8eaf0;--text2:#9498a8;--text3:#5a5e6e;
+  --accent:#c9a96e;--accent2:#8b6f3e;
+  --red:#e05252;--green:#52c07a;--amber:#e0a84a;--blue:#5b9bd6;
+  --watcher:#a78bfa;
+  --font-display:'Fraunces',serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --r:8px;--r2:14px;
+  --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+html{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6}
+body{min-height:100vh;overflow-x:hidden}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.main{display:flex;flex-direction:column;min-height:100vh}
+
+/* SIDEBAR */
+.sim-header{padding:24px 20px 16px;border-bottom:1px solid var(--border)}
+.sim-title{font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--text);letter-spacing:-0.3px}
+.sim-sub{font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:4px}
+.seed-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+.seed-input{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);font-size:12px;padding:6px 10px;border-radius:var(--r);width:100px;outline:none}
+.seed-input:focus{border-color:var(--accent)}
+.btn-run{background:var(--accent);color:#0d0e11;border:none;font-family:var(--font-body);font-size:12px;font-weight:500;padding:6px 14px;border-radius:var(--r);cursor:pointer;transition:var(--transition)}
+.btn-run:hover{background:#d4b07e}
+
+/* AGENT ROSTER */
+.roster-label{font-size:10px;font-family:var(--font-mono);color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:16px 20px 8px}
+.agent-card{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:var(--transition);border-left:2px solid transparent}
+.agent-card:hover{background:var(--surface2)}
+.agent-card.active{background:var(--surface2);border-left-color:var(--accent)}
+.agent-card.instigator-card{border-left-color:var(--amber)!important}
+.portrait{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;font-family:var(--font-mono);flex-shrink:0;position:relative;overflow:hidden;border:1.5px solid var(--border2)}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.portrait-fallback{font-size:13px;font-weight:500}
+.agent-meta{flex:1;min-width:0}
+.agent-name{font-size:13px;font-weight:500;color:var(--text)}
+.agent-role{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+.agent-outcome{font-size:10px;font-family:var(--font-mono);padding:2px 6px;border-radius:4px;margin-top:2px;display:inline-block}
+.outcome-active{background:rgba(82,192,122,0.12);color:var(--green)}
+.outcome-caught{background:rgba(224,82,82,0.12);color:var(--red)}
+.outcome-escaped{background:rgba(82,192,122,0.2);color:var(--green);font-weight:500}
+.outcome-shot{background:rgba(224,82,82,0.2);color:var(--red);font-weight:500}
+.outcome-suspended{background:rgba(224,168,74,0.12);color:var(--amber)}
+.outcome-warned{background:rgba(91,155,214,0.12);color:var(--blue)}
+.outcome-nothing{background:rgba(90,94,110,0.15);color:var(--text3)}
+
+/* WATCHER SIDEBAR ENTRY */
+.watcher-entry{padding:10px 20px;cursor:pointer;border-left:2px solid transparent;transition:var(--transition)}
+.watcher-entry:hover{background:var(--surface2)}
+.watcher-entry.active{background:var(--surface2);border-left-color:var(--watcher)}
+.watcher-icon{width:38px;height:38px;border-radius:50%;background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.watcher-eye{width:14px;height:14px;fill:var(--watcher)}
+
+/* MAIN STAGE */
+.stage-top{padding:32px 40px 0;border-bottom:1px solid var(--border)}
+.breadcrumb{font-size:11px;font-family:var(--font-mono);color:var(--text3);margin-bottom:12px}
+.stage-title{font-family:var(--font-display);font-size:28px;font-weight:300;color:var(--text);letter-spacing:-0.5px}
+.stage-title em{font-style:italic;color:var(--accent)}
+
+/* DAY STEPPER */
+.day-nav{display:flex;align-items:center;gap:0;padding:0 40px;border-bottom:1px solid var(--border);background:var(--surface)}
+.day-btn{padding:16px 20px;font-size:12px;font-family:var(--font-mono);color:var(--text3);cursor:pointer;transition:var(--transition);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+.day-btn:hover{color:var(--text)}
+.day-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.day-btn.has-event::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--amber);margin-left:6px;vertical-align:middle}
+.final-btn{margin-left:auto}
+.final-btn.active{color:var(--watcher);border-bottom-color:var(--watcher)}
+
+/* CONTENT PANELS */
+.panel{padding:32px 40px;display:none;animation:fadeIn 0.18s ease}
+.panel.visible{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* GROUND TRUTH PANEL */
+.gt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.gt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
+.gt-card-label{font-size:10px;font-family:var(--font-mono);color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.gt-card-value{font-size:15px;color:var(--text);line-height:1.4}
+.gt-hidden{background:rgba(167,139,250,0.06);border-color:rgba(167,139,250,0.2)}
+.gt-hidden .gt-card-label{color:var(--watcher)}
+.gt-hidden .gt-card-value{color:var(--watcher)}
+
+/* PERCEPTION PANEL */
+.perc-section-label{font-size:11px;font-family:var(--font-mono);color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;margin-top:28px}
+.perc-grid{display:flex;flex-direction:column;gap:12px}
+.perc-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px 20px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;transition:var(--transition)}
+.perc-row:hover{border-color:var(--border2)}
+.perc-row.suspicious{border-left:3px solid var(--red)}
+.perc-row.uncertain{border-left:3px solid var(--amber)}
+.perc-row.benign{border-left:3px solid var(--green)}
+.perc-who{display:flex;align-items:center;gap:10px}
+.perc-name{font-size:13px;font-weight:500}
+.perc-role-tag{font-size:10px;font-family:var(--font-mono);color:var(--text3)}
+.perc-belief{font-size:13px;color:var(--text2);font-style:italic;line-height:1.4}
+.perc-belief.none{color:var(--text3);font-style:normal}
+.perc-badge{font-size:10px;font-family:var(--font-mono);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.badge-suspicious{background:rgba(224,82,82,0.12);color:var(--red)}
+.badge-uncertain{background:rgba(224,168,74,0.12);color:var(--amber)}
+.badge-benign{background:rgba(82,192,122,0.12);color:var(--green)}
+
+/* STATS BAR */
+.stats-row{display:flex;gap:8px;align-items:center;margin:6px 0 2px}
+.stat-bar-wrap{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:2px;transition:width 0.5s ease}
+.stat-label{font-size:10px;font-family:var(--font-mono);color:var(--text3);width:60px}
+.stat-val{font-size:10px;font-family:var(--font-mono);color:var(--text2);width:32px;text-align:right}
+
+/* PROPAGATION PANEL */
+.prop-flow{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.prop-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px}
+.prop-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prop-arrow{font-family:var(--font-mono);font-size:12px;color:var(--text3)}
+.prop-type-badge{font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;margin-left:auto}
+.type-honest{background:rgba(82,192,122,0.12);color:var(--green)}
+.type-distorted{background:rgba(224,82,82,0.12);color:var(--red)}
+.type-plant{background:rgba(224,168,74,0.15);color:var(--amber)}
+.type-withheld{background:rgba(90,94,110,0.15);color:var(--text3)}
+.type-fight{background:rgba(224,82,82,0.08);color:var(--red)}
+.type-tip_guard{background:rgba(91,155,214,0.12);color:var(--blue)}
+.prop-transmitted{font-size:13px;color:var(--text2);font-style:italic;padding:8px 12px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);line-height:1.4}
+
+/* TRAP / OUTCOME PANELS */
+.trap-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px;margin-bottom:12px}
+.trap-card.succeeded{border-left:3px solid var(--red)}
+.trap-card.failed{border-left:3px solid var(--text3)}
+.trap-card.detected{border-left:3px solid var(--blue)}
+.trap-label{font-size:11px;font-family:var(--font-mono);letter-spacing:0.5px;margin-bottom:12px}
+.trap-meta{display:flex;flex-direction:column;gap:6px}
+.trap-row{display:flex;gap:8px;font-size:13px}
+.trap-key{color:var(--text3);width:90px;flex-shrink:0;font-family:var(--font-mono);font-size:11px;padding-top:1px}
+.trap-val{color:var(--text)}
+.outcome-big{margin:24px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px}
+.outcome-name{font-family:var(--font-display);font-size:22px;font-weight:300}
+.outcome-detail{font-size:14px;color:var(--text2);line-height:1.6;margin-top:8px}
+
+/* DISTORTION PANEL */
+.distortion-grid{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.dist-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.dist-meter{display:flex;align-items:center;gap:10px;margin-top:8px}
+.dist-bar-wrap{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.dist-bar-fill{height:100%;border-radius:3px}
+.dist-HIGH .dist-bar-fill{background:var(--red)}
+.dist-MED  .dist-bar-fill{background:var(--amber)}
+.dist-LOW  .dist-bar-fill{background:var(--green)}
+.dist-NONE .dist-bar-fill{background:var(--text3)}
+.dist-score{font-size:11px;font-family:var(--font-mono);color:var(--text3)}
+.dist-label{font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:4px}
+.dl-HIGH{background:rgba(224,82,82,0.12);color:var(--red)}
+.dl-MED{background:rgba(224,168,74,0.12);color:var(--amber)}
+.dl-LOW{background:rgba(82,192,122,0.12);color:var(--green)}
+.dl-NONE{background:rgba(90,94,110,0.1);color:var(--text3)}
+
+/* AGENT DETAIL (right panel when clicking roster) */
+.agent-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px;margin-top:20px}
+.ad-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.ad-portrait{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;font-family:var(--font-mono);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
+.ad-portrait img{width:100%;height:100%;object-fit:cover}
+.ad-name{font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-0.3px}
+.ad-role{font-size:12px;font-family:var(--font-mono);color:var(--text3);margin-top:2px}
+.ad-section{margin-bottom:16px}
+.ad-label{font-size:10px;font-family:var(--font-mono);color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.ad-agenda{font-size:13px;color:var(--text2);font-style:italic;line-height:1.5}
+.trait-pill{display:inline-block;font-size:11px;font-family:var(--font-mono);padding:3px 9px;border-radius:4px;background:var(--surface3);border:1px solid var(--border2);color:var(--text);margin:2px}
+.belief-item{font-size:12px;padding:8px 10px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px;color:var(--text2);font-style:italic;line-height:1.4}
+.belief-conf{font-size:10px;font-family:var(--font-mono);color:var(--text3);margin-top:3px}
+
+/* WATCHER PANEL */
+.watcher-panel-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.watcher-orb{width:44px;height:44px;border-radius:50%;background:rgba(167,139,250,0.1);border:2px solid rgba(167,139,250,0.3);display:flex;align-items:center;justify-content:center}
+.watcher-title{font-family:var(--font-display);font-size:22px;font-weight:300;color:var(--watcher)}
+.watcher-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;padding:16px;background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.12);border-radius:var(--r2)}
+.summary-stat{display:inline-flex;align-items:baseline;gap:6px;margin-right:24px;margin-bottom:8px}
+.summary-num{font-size:28px;font-family:var(--font-display);font-weight:600;color:var(--text)}
+.summary-unit{font-size:12px;color:var(--text3);font-family:var(--font-mono)}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:16px}
+.loading-dots{display:flex;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease infinite}
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
+.loading-label{font-size:12px;font-family:var(--font-mono);color:var(--text3)}
+
+/* NAV BUTTONS */
+.nav-strip{display:flex;gap:10px;padding:24px 40px;background:var(--surface);border-top:1px solid var(--border);margin-top:auto}
+.nav-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-body);font-size:13px;padding:9px 18px;border-radius:var(--r);cursor:pointer;transition:var(--transition)}
+.nav-btn:hover{background:var(--surface3);border-color:var(--border)}
+.nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#0d0e11;font-weight:500}
+.nav-btn.primary:hover{background:#d4b07e}
+.nav-btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto}
+  .panel{padding:20px}
+  .day-nav{overflow-x:auto}
+}
+
+/* INSTIGATOR TAG */
+.instigator-tag{font-size:10px;font-family:var(--font-mono);background:rgba(224,168,74,0.12);color:var(--amber);padding:2px 6px;border-radius:4px;margin-left:6px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sim-header">
+      <div class="sim-title">Prison Sandbox</div>
+      <div class="sim-sub">Agent Simulation · PhD Research</div>
+      <div class="seed-row">
+        <input class="seed-input" id="seedInput" type="number" placeholder="seed" min="0">
+        <button class="btn-run" onclick="startSim()">&#9654; Run</button>
+      </div>
+    </div>
+
+    <div class="roster-label">Agent Roster</div>
+    <div id="rosterList"></div>
+
+    <div class="roster-label" style="margin-top:8px">The Watcher</div>
+    <div class="watcher-entry" id="watcherEntry" onclick="selectWatcher()">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="watcher-icon">
+          <svg class="watcher-eye" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">The Watcher</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">omniscient · no agenda</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Day navigation -->
+    <nav class="day-nav" id="dayNav">
+      <button class="day-btn active" data-day="gt" onclick="showDay('gt',this)">Ground Truth</button>
+      <button class="day-btn" data-day="1" onclick="showDay('1',this)">Day 1 · Observation</button>
+      <button class="day-btn" data-day="2" onclick="showDay('2',this)">Day 2 · Spread</button>
+      <button class="day-btn" data-day="3" onclick="showDay('3',this)">Day 3 · Traps</button>
+      <button class="day-btn" data-day="4" onclick="showDay('4',this)">Day 4 · Escalation</button>
+      <button class="day-btn has-event final-btn" data-day="5" onclick="showDay('5',this)">Day 5 · Resolution</button>
+    </nav>
+
+    <!-- PANELS -->
+    <div id="loadingPanel" class="panel visible" style="display:flex!important">
+      <div class="loading">
+        <div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="loading-label">Initialising simulation...</div>
+      </div>
+    </div>
+
+    <!-- Ground Truth -->
+    <div id="panel-gt" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">WATCHER · GROUND TRUTH</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">What <em style="font-style:italic;color:var(--accent)">actually</em> happened</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Only the Watcher holds this record with perfect fidelity. Every agent below will form their own version of events — filtered through trust, personality, and a dice roll representing instinct.</div>
+      <div class="gt-grid" id="gtGrid"></div>
+      <div class="divider"></div>
+      <div style="font-size:12px;font-family:var(--font-mono);color:var(--text3)">Seed: <span id="seedDisplay" style="color:var(--accent)"></span> · Use the same seed to reproduce this exact run.</div>
+    </div>
+
+    <!-- Day 1 Perception -->
+    <div id="panel-1" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">DAY 1 · PERCEPTION ENGINE</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">Each agent <em style="font-style:italic;color:var(--accent)">interprets</em> what they saw</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">The same event. Seven different perception engines. Trust scores, traits, and a dice roll determine what each agent <em>believes</em> they witnessed — not what actually occurred.</div>
+      <div class="perc-section-label">Observations formed</div>
+      <div class="perc-grid" id="percGrid"></div>
+    </div>
+
+    <!-- Day 2 -->
+    <div id="panel-2" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">DAY 2 · PROPAGATION</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">Information <em style="font-style:italic;color:var(--accent)">spreads</em></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Agents share what they believe. Each transmission passes through the sender's truth rate. What the receiver gets is not necessarily what the sender knows — and not at all what the Watcher recorded.</div>
+      <div class="prop-flow" id="propGrid2"></div>
+    </div>
+
+    <!-- Day 3 -->
+    <div id="panel-3" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">DAY 3 · TRAPS & RUMOURS</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">Sneaky agents <em style="font-style:italic;color:var(--accent)">act</em></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Agents with the Sneaky trait may plant deferred traps — false tip-offs to guards that will fire on a future day. Connected agents spread exit rumours that may or may not be true.</div>
+      <div class="prop-flow" id="propGrid3"></div>
+    </div>
+
+    <!-- Day 4 -->
+    <div id="panel-4" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">DAY 4 · ESCALATION</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">Tattlers <em style="font-style:italic;color:var(--accent)">report</em>, second wave spreads</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Agents with the Tattler trait may go directly to guards. A second wave of propagation carries increasingly distorted information — three hops from the original event.</div>
+      <div class="prop-flow" id="propGrid4"></div>
+    </div>
+
+    <!-- Day 5 Resolution -->
+    <div id="panel-5" class="panel">
+      <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">DAY 5 · RESOLUTION</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px">Traps <em style="font-style:italic;color:var(--accent)">resolve</em></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Deferred actions execute. Some traps succeed. Some are detected — Connected or Paranoid targets may be warned by allies. Agents who believe they know an exit route may attempt escape.</div>
+      <div id="trapResolutions"></div>
+      <div id="escapeAttempts"></div>
+      <div id="noOutcomes" style="display:none;font-size:13px;color:var(--text3);font-family:var(--font-mono);padding:24px;text-align:center">No traps triggered. No escape attempts this run.</div>
+    </div>
+
+    <!-- Watcher / Distortion Panel -->
+    <div id="panel-watcher" class="panel">
+      <div class="watcher-panel-header">
+        <div class="watcher-orb">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--watcher)"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </div>
+        <div class="watcher-title">Distortion Report</div>
+      </div>
+      <div class="watcher-desc" id="watcherDesc"></div>
+      <div style="margin-bottom:20px;display:flex;flex-wrap:wrap" id="summaryStats"></div>
+      <div class="perc-section-label">Per-agent distortion from ground truth</div>
+      <div class="distortion-grid" id="distortionGrid"></div>
+    </div>
+
+    <!-- Agent Detail Panel -->
+    <div id="panel-agent" class="panel">
+      <div id="agentDetailContent"></div>
+    </div>
+
+    <div class="nav-strip" id="navStrip">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>&#8592; Previous</button>
+      <button class="nav-btn primary" id="nextBtn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SIMULATION ENGINE (JavaScript port of Python v2)
+// ═══════════════════════════════════════════════════
+
+const OBJECT_LOCATIONS=[
+  "garbage bins (north yard)","loose brick (library wall)",
+  "floor panel (workshop)","maintenance tunnel B",
+  "laundry room vent","east wall crack","kitchen vent",
+  "medical bay window","cell block D drainage","boiler room hatch"
+];
+const PRISONER_ACTIONS=[
+  "loitering near object","checking surroundings before touching object",
+  "quickly moving something near object","inspecting object carefully",
+  "passing by and pausing briefly","crouching near object"
+];
+const GUARD_ACTIONS=[
+  "doing a slow sweep near object","stopping and inspecting object",
+  "leaning against wall near object","checking the area methodically"
+];
+const TRUE_EXITS=["laundry room vent","east wall crack","maintenance tunnel B"];
+const FALSE_EXITS=["kitchen vent","medical bay window","cell block D drainage","floor panel (workshop)"];
+const GT_REASONS={
+  prisoner:["guard order — routine cleaning duty","hiding contraband","checking an escape route","meeting a contact","retrieving something hidden earlier","curiosity — heard a rumor"],
+  guard:["routine patrol sweep","responding to an anonymous tip","random search protocol","supervisor's order"]
+};
+
+// Seeded PRNG (Mulberry32)
+function makePRNG(seed){
+  let s=seed>>>0;
+  return function(){
+    s+=0x6D2B79F5;let t=s;
+    t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);
+    return((t^t>>>14)>>>0)/4294967296;
+  };
+}
+
+let rng,SIM={};
+
+function rand(){return rng();}
+function randInt(a,b){return Math.floor(rand()*(b-a+1))+a;}
+function randChoice(arr){return arr[Math.floor(rand()*arr.length)];}
+function randFloat(a,b){return rand()*(b-a)+a;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+// ── Agent class ──────────────────────────────────
+class Agent{
+  constructor(id,name,role,truthRate,traits,agenda,initBeliefs,initTrust,portrait){
+    this.id=id;this.name=name;this.role=role;
+    this.truthRate=Math.round(clamp(truthRate,0,1)*100)/100;
+    this.traits=traits.slice(0,2);this.agenda=agenda;
+    this.portrait=portrait||null;
+    this.beliefs={};this.trust={};
+    this.deferredActions=[];this.outcome="active";
+    if(initBeliefs)initBeliefs.forEach(b=>this.beliefs[b.domain]=b);
+    if(initTrust)Object.assign(this.trust,initTrust);
+  }
+  getTrust(id){return Math.round((this.trust[id]??0.50)*100)/100;}
+  updateTrust(id,delta){
+    const cur=this.getTrust(id);
+    this.trust[id]=Math.round(clamp(cur+delta,0,1)*100)/100;
+  }
+  perceive(observed,action,location,day){
+    const trust=this.getTrust(observed.id);
+    const dice=rand();
+    const paranoia="Paranoid" in this.traits||this.traits.includes("Paranoid")?0.30:0;
+    const sneakyB=this.traits.includes("Sneaky")?0.10:0;
+    const loyalD=(this.traits.includes("Loyal")&&trust>0.6)?0.20:0;
+    const lazyD=this.traits.includes("Lazy")?0.10:0;
+    const cowardD=this.traits.includes("Cowardly")?0.08:0;
+    let roleBonus=0;
+    if(this.role==="guard"&&observed.role==="prisoner")roleBonus=0.14;
+    if(this.role==="prisoner"&&observed.role==="guard")roleBonus=0.08;
+    const suspicion=Math.round(clamp(dice+paranoia+sneakyB+roleBonus-loyalD-lazyD-cowardD-(trust*0.42),0,1)*100)/100;
+    let label,value,confidence,domain;
+    if(suspicion>0.52){
+      label="suspicious";
+      value=`${observed.name} is hiding something at ${location}`;
+      confidence=Math.round(Math.min(0.92,suspicion*0.95)*100)/100;
+      domain=`suspicion_${observed.id}`;
+    }else if(suspicion>0.28){
+      label="uncertain";
+      value=`${observed.name} was doing something at ${location} — unclear`;
+      confidence=Math.round(suspicion*0.52*100)/100;
+      domain=`observation_${observed.id}`;
+    }else{
+      return{belief:null,dice,suspicion,label:"benign"};
+    }
+    const belief={domain,value,confidence,sourceId:"self_observed",hops:0,dayAcquired:day,isFalse:false};
+    this.beliefs[domain]=belief;
+    return{belief,dice,suspicion,label};
+  }
+  decideOutput(topic,target,day,allAgents){
+    const trust=this.getTrust(target.id);
+    const dice=rand();
+    const belief=this.beliefs[topic];
+    const sensitive=["exit","escape","suspicion","contraband","gang_secret"].some(s=>topic.includes(s));
+    if(this.role==="guard"&&belief&&dice>0.55)
+      return{type:"tip_guard",value:`${this.name} logs ${target.name} for official review`,deferred:null};
+    if(trust<0.22&&sensitive&&(this.traits.includes("Violent")||dice>0.88))
+      return{type:"fight",value:`${this.name} refuses aggressively`,deferred:null};
+    if(trust<0.28||(this.traits.includes("Loyal")&&sensitive&&target.role!==this.role&&trust<0.52))
+      return{type:"withheld",value:`${this.name} claims ignorance`,deferred:null};
+    if(!belief)return{type:"withheld",value:`${this.name} has nothing on that`,deferred:null};
+    if(dice<this.truthRate)return{type:"honest",value:belief.value,deferred:null};
+    const canPlant=this.traits.includes("Sneaky")&&trust<0.55&&dice>0.38&&this.role==="prisoner"&&allAgents;
+    if(canPlant){
+      const falseLoc=this._falseLoc();
+      const execDay=day+randInt(2,4);
+      const sc=Math.round(randFloat(0.40,0.85)*100)/100;
+      const deferred={type:"tip_guard",targetId:target.id,location:falseLoc,
+        executeOnDay:execDay,plantedOnDay:day,plantedById:this.id,successChance:sc,
+        description:`${this.name} tips off a guard that ${target.name} will be at '${falseLoc}' on day ${execDay}`};
+      this.deferredActions.push(deferred);
+      return{type:"plant",value:falseLoc,deferred};
+    }
+    return{type:"distorted",value:this._falseLoc(),deferred:null};
+  }
+  _falseLoc(){
+    const all=[...OBJECT_LOCATIONS,...FALSE_EXITS];
+    const mine=Object.values(this.beliefs).map(b=>b.value);
+    const alts=all.filter(l=>!mine.includes(l));
+    return randChoice(alts.length?alts:all);
+  }
+  receive(domain,value,sender,senderConf,day,isFalse=false){
+    const trust=this.getTrust(sender.id);
+    let recvConf=Math.round(Math.max(0.01,senderConf*trust)*100)/100;
+    const existing=this.beliefs[domain];
+    if(!existing||recvConf>existing.confidence){
+      const hops=existing?(existing.hops+1):1;
+      const decay=0.03*hops;
+      recvConf=Math.max(0.01,recvConf-decay);
+      this.beliefs[domain]={domain,value,confidence:Math.round(recvConf*100)/100,
+        sourceId:sender.id,hops,dayAcquired:day,isFalse};
+      this.updateTrust(sender.id,+0.03);
+      return true;
+    }return false;
+  }
+  resolveDeferred(day){
+    const triggered=this.deferredActions.filter(a=>a.executeOnDay===day);
+    this.deferredActions=this.deferredActions.filter(a=>a.executeOnDay!==day);
+    return triggered;
+  }
+}
+
+// ── Build agents ─────────────────────────────────
+function buildAgents(){
+  const ids=["marcus","tyrell","cole","dez","finn","guard_reeves","guard_walsh"];
+  const rTrust=exclude=>{
+    const t={};
+    ids.filter(i=>i!==exclude).forEach(i=>t[i]=Math.round(randFloat(0.15,0.85)*100)/100);
+    return t;
+  };
+  const allTraits=["Loyal","Sneaky","Tattler","Cowardly","Violent","Greedy","Connected","Paranoid","Lazy"];
+  const sample=(pool,n)=>{
+    const s=[...pool];for(let i=s.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[s[i],s[j]]=[s[j],s[i]];}
+    return s.slice(0,n);
+  };
+  const rotatePrisoner=()=>Math.round(randFloat(0.55,0.90)*100)/100;
+  const rotateSneak=()=>Math.round(randFloat(0.15,0.45)*100)/100;
+
+  const marcus=new Agent("marcus","Marcus","prisoner",rotatePrisoner(),
+    sample(["Loyal","Connected","Paranoid","Violent"],2),
+    "Find the real exit. Keep head down.",
+    [{domain:"exit_location",value:randChoice([...TRUE_EXITS,...FALSE_EXITS]),confidence:Math.round(randFloat(0.35,0.75)*100)/100,sourceId:"self",hops:0,dayAcquired:0}],
+    rTrust("marcus"),"portraits/marcus.png");
+
+  const tyrell=new Agent("tyrell","Tyrell","prisoner",rotateSneak(),
+    sample(["Sneaky","Greedy","Tattler","Cowardly"],2),
+    "Control information. Frame rivals. Profit.",
+    [],rTrust("tyrell"),"portraits/tyrell.png");
+
+  const cole=new Agent("cole","Cole","prisoner",rotatePrisoner(),
+    sample(["Loyal","Violent","Connected"],2),
+    "Protect gang allies. Survive.",
+    [{domain:"gang_territory",value:"east block",confidence:0.92,sourceId:"self",hops:0,dayAcquired:0}],
+    rTrust("cole"),"portraits/cole.png");
+
+  const dez=new Agent("dez","Dez","prisoner",Math.round(randFloat(0.40,0.65)*100)/100,
+    sample(["Paranoid","Cowardly","Greedy","Sneaky"],2),
+    "Stay alive. Pass information when it benefits me.",
+    [{domain:"guard_schedule",value:"midnight patrol gap",confidence:Math.round(randFloat(0.30,0.55)*100)/100,sourceId:"self",hops:0,dayAcquired:0}],
+    rTrust("dez"),"portraits/dez.png");
+
+  const finn=new Agent("finn","Finn","prisoner",Math.round(randFloat(0.50,0.80)*100)/100,
+    sample(["Connected","Loyal","Tattler","Violent"],2),
+    "Find a way out. Trust selectively.",
+    [],rTrust("finn"),"portraits/finn.png");
+
+  const reeves=new Agent("guard_reeves","Officer Reeves","guard",Math.round(randFloat(0.55,0.85)*100)/100,
+    sample(["Lazy","Cowardly","Sneaky","Connected"],2),
+    "Minimum effort. Avoid incident reports. Go home safe.",
+    [],rTrust("guard_reeves"),"portraits/reeves.png");
+
+  const walsh=new Agent("guard_walsh","Officer Walsh","guard",Math.round(randFloat(0.50,0.80)*100)/100,
+    sample(["Violent","Paranoid","Tattler","Loyal"],2),
+    "Maintain order. Zero tolerance. Document everything.",
+    [],rTrust("guard_walsh"),"portraits/walsh.png");
+
+  return[marcus,tyrell,cole,dez,finn,reeves,walsh];
+}
+
+function pickInstigator(agents){
+  const weights=agents.map(a=>a.role==="prisoner"?3:1);
+  const total=weights.reduce((a,b)=>a+b,0);
+  let r=rand()*total;
+  for(let i=0;i<agents.length;i++){r-=weights[i];if(r<=0)return agents[i];}
+  return agents[0];
+}
+
+function buildConversations(agents,instigator,domain,day){
+  const convos=[];const seen=new Set();
+  for(const speaker of agents){
+    if(speaker.id===instigator.id)continue;
+    if(!speaker.beliefs[domain])continue;
+    let candidates=agents.filter(a=>a.id!==speaker.id&&a.id!==instigator.id);
+    if(speaker.traits.includes("Sneaky"))
+      candidates.sort((a,b)=>speaker.getTrust(a.id)-speaker.getTrust(b.id));
+    else
+      candidates.sort((a,b)=>speaker.getTrust(b.id)-speaker.getTrust(a.id));
+    for(const recv of candidates.slice(0,2)){
+      const key=`${speaker.id}:${recv.id}`;
+      if(!seen.has(key)){convos.push({senderId:speaker.id,receiverId:recv.id,topic:domain});seen.add(key);}
+    }
+  }
+  return convos;
+}
+
+// ── Run full simulation ───────────────────────────
+function runSimulation(seed){
+  rng=makePRNG(seed);
+  const agents=buildAgents();
+  const instigator=pickInstigator(agents);
+
+  const acts=instigator.role==="guard"?GUARD_ACTIONS:PRISONER_ACTIONS;
+  const action=randChoice(acts);
+  const location=randChoice(OBJECT_LOCATIONS);
+  const reason=randChoice(GT_REASONS[instigator.role]);
+  const timeLabel=randChoice(["23:00","02:30","04:15","21:45"]);
+  const hiddenReasons=["hiding contraband","checking an escape route","retrieving something hidden earlier"];
+  const hiddenOptions=["shiv","escape route map","burner phone","keys stolen from guard","nothing (rumor was wrong)"];
+  const hiddenValue=hiddenReasons.includes(reason)?randChoice(hiddenOptions):null;
+
+  const event={day:1,time:timeLabel,agentId:instigator.id,agentName:instigator.name,
+    role:instigator.role,action,location,reason,hiddenValue};
+
+  // DAY 1 Perception
+  const perceptions=[];
+  for(const agent of agents){
+    if(agent.id===instigator.id)continue;
+    const {belief,dice,suspicion,label}=agent.perceive(instigator,action,location,1);
+    perceptions.push({observerId:agent.id,observerName:agent.name,observerRole:agent.role,
+      day:1,perceivedValue:belief?belief.value:"nothing significant",
+      confidence:belief?belief.confidence:0,dice,suspicion,label,
+      trust:agent.getTrust(instigator.id)});
+  }
+
+  // Paranoid overnight
+  const suspDomain=`suspicion_${instigator.id}`;
+  for(const agent of agents){
+    if(agent.id===instigator.id)continue;
+    if(agent.traits.includes("Paranoid")&&!agent.beliefs[suspDomain]){
+      agent.beliefs[suspDomain]={domain:suspDomain,
+        value:`${instigator.name} is hiding something at ${location}`,
+        confidence:Math.round(randFloat(0.40,0.58)*100)/100,
+        sourceId:"self_observed",hops:0,dayAcquired:1,isFalse:false};
+    }
+  }
+
+  // DAY 2
+  const propLog=[];
+  const doPropagate=(convos,day)=>{
+    for(const c of convos){
+      const sender=agents.find(a=>a.id===c.senderId);
+      const receiver=agents.find(a=>a.id===c.receiverId);
+      if(!sender||!receiver)continue;
+      const {type,value,deferred}=sender.decideOutput(c.topic,receiver,day,agents);
+      const sb=sender.beliefs[c.topic];
+      const sConf=sb?sb.confidence:0;
+      const hops=sb?(sb.hops+1):1;
+      if(!["withheld","fight","tip_guard"].includes(type)){
+        const isFalse=["distorted","plant"].includes(type);
+        receiver.receive(c.topic,value,sender,sConf,day,isFalse);
+      }
+      if(type==="withheld")receiver.updateTrust(sender.id,-0.02);
+      if(type==="fight")receiver.updateTrust(sender.id,-0.08);
+      propLog.push({day,senderId:sender.id,senderName:sender.name,
+        receiverId:receiver.id,receiverName:receiver.name,
+        domain:c.topic,transmitted:value,type,hops,
+        senderTruth:sender.truthRate,deferred});
+    }
+  };
+
+  const c2=buildConversations(agents,instigator,suspDomain,2);
+  doPropagate(c2,2);
+
+  // DAY 3 — Traps + exit rumors
+  const c3=[];
+  for(const agent of agents){
+    if(!agent.traits.includes("Sneaky")||!agent.beliefs[suspDomain])continue;
+    const targets=agents.filter(a=>a.id!==agent.id&&a.id!==instigator.id&&agent.getTrust(a.id)<0.55);
+    if(targets.length){const t=randChoice(targets);c3.push({senderId:agent.id,receiverId:t.id,topic:suspDomain});}
+  }
+  for(const agent of agents){
+    if(!agent.traits.includes("Connected"))continue;
+    if(!agent.beliefs["exit_location"]){
+      const isReal=rand()>0.5;
+      const route=randChoice(isReal?TRUE_EXITS:FALSE_EXITS);
+      agent.beliefs["exit_location"]={domain:"exit_location",value:route,
+        confidence:Math.round(randFloat(0.45,0.75)*100)/100,
+        sourceId:"street_contact",hops:0,dayAcquired:3,isFalse:!isReal};
+    }
+    const recvs=agents.filter(a=>a.id!==agent.id&&a.role==="prisoner")
+      .sort((a,b)=>agent.getTrust(b.id)-agent.getTrust(a.id));
+    if(recvs.length)c3.push({senderId:agent.id,receiverId:recvs[0].id,topic:"exit_location"});
+  }
+  doPropagate(c3,3);
+
+  // DAY 4 — Tattlers + second wave
+  const c4=[];
+  for(const agent of agents){
+    if(!agent.traits.includes("Tattler")||!agent.beliefs[suspDomain])continue;
+    const guards=agents.filter(a=>a.role==="guard");
+    if(guards.length)c4.push({senderId:agent.id,receiverId:guards[0].id,topic:suspDomain});
+  }
+  c4.push(...buildConversations(agents,instigator,suspDomain,4).slice(0,3));
+  doPropagate(c4,4);
+
+  // DAY 5 — Resolve traps
+  const trapResults=[];
+  const outcomes=[];
+
+  for(const agent of agents){
+    const triggered=agent.resolveDeferred(5);
+    for(const action of triggered){
+      const target=agents.find(a=>a.id===action.targetId);
+      const tName=target?target.name:action.targetId;
+      // Detection
+      let detected=false;
+      if(target){
+        const dRoll=rand();
+        let bonus=0;
+        if(target.traits.includes("Connected"))bonus+=0.25;
+        if(target.traits.includes("Paranoid"))bonus+=0.20;
+        const avgTrust=agents.filter(a=>a.id!==target.id&&a.id!==agent.id)
+          .reduce((s,a)=>s+a.getTrust(target.id),0)/Math.max(1,agents.length-2);
+        if(avgTrust>0.65)bonus+=0.15;
+        if(dRoll<bonus)detected=true;
+      }
+      const success=!detected&&rand()<action.successChance;
+      let outcomeLabel="nothing",detail="";
+      if(detected){
+        outcomeLabel="warned";
+        detail=`${tName} was alerted before the trap sprang — avoided the location entirely.`;
+      }else if(success){
+        const r=rand();
+        const hasViolentGuard=agents.find(g=>g.role==="guard"&&g.traits.includes("Violent"));
+        if(hasViolentGuard&&r>0.75){outcomeLabel="shot";detail=`${tName} was found at the wrong location. Officer Walsh opened fire.`;}
+        else{outcomeLabel="caught";detail=`${tName} was found at '${action.location}', questioned and placed in solitary.`;}
+      }else{
+        outcomeLabel="nothing";detail=`Guard checked '${action.location}' — found nothing. Trap failed. ${tName} is unaware.`;
+      }
+      if(target)target.outcome=outcomeLabel;
+      trapResults.push({day:5,plantedBy:agent.name,target:tName,location:action.location,
+        plantDay:action.plantedOnDay,success,detected,outcomeLabel,detail,description:action.description});
+      if(outcomeLabel!=="nothing"){
+        outcomes.push({day:5,agentId:action.targetId,agentName:tName,
+          role:target?target.role:"prisoner",outcome:outcomeLabel,
+          cause:`Trap planted by ${agent.name} on Day ${action.plantedOnDay}`,detail});
+      }
+    }
+  }
+
+  // Escape attempts
+  const guards=agents.filter(a=>a.role==="guard");
+  for(const agent of agents){
+    if(agent.role!=="prisoner"||agent.outcome!=="active")continue;
+    const eb=agent.beliefs["exit_location"];
+    if(!eb)continue;
+    const thresh=agent.traits.includes("Cowardly")?0.82:0.65;
+    if(eb.confidence<thresh)continue;
+    let intercepted=false;
+    for(const g of guards){
+      let alertness=g.getTrust(agent.id);
+      if(g.traits.includes("Lazy"))alertness*=0.5;
+      if(g.traits.includes("Violent")||g.traits.includes("Paranoid"))alertness*=1.3;
+      if(rand()<alertness*0.5){intercepted=true;break;}
+    }
+    const routeReal=TRUE_EXITS.includes(eb.value);
+    let oc,det;
+    if(intercepted){oc="caught";det=`${agent.name} attempted escape via '${eb.value}' but was intercepted.`;}
+    else if(routeReal&&rand()>0.35){oc="escaped";det=`${agent.name} followed the rumour about '${eb.value}' — the route was real. Successfully escaped.`;}
+    else if(!routeReal){oc="caught";det=`${agent.name} went to '${eb.value}' believing it was an exit — it was a false rumour. Walked into a guard station.`;}
+    else continue;
+    agent.outcome=oc;
+    outcomes.push({day:5,agentId:agent.id,agentName:agent.name,role:"prisoner",
+      outcome:oc,cause:`Escape attempt via '${eb.value}'`,detail:det});
+  }
+
+  // Distortion
+  const distortion={};
+  for(const agent of agents){
+    if(agent.id===instigator.id){distortion[agent.id]={name:agent.name,role:agent.role,level:"NONE (actor)",score:0};continue;}
+    const relevant=Object.entries(agent.beliefs).filter(([k,b])=>k.includes(instigator.id)||b.value.includes(location));
+    if(!relevant.length){distortion[agent.id]={name:agent.name,role:agent.role,level:"NONE (unaware)",score:0};continue;}
+    const top=relevant.reduce((best,[k,b])=>b.confidence>best[1].confidence?[k,b]:best,relevant[0]);
+    const b=top[1];
+    const score=Math.round((b.hops*0.20+(1-b.confidence)*0.50)*100)/100;
+    distortion[agent.id]={name:agent.name,role:agent.role,
+      level:score>0.60?"HIGH":score>0.30?"MED":"LOW",score,
+      belief:b.value,confidence:b.confidence,hops:b.hops};
+  }
+
+  return{seed,event,agents,perceptions,propLog,trapResults,outcomes,distortion,suspDomain};
+}
+
+// ═══════════════════════════════════════════════════
+// UI RENDERING
+// ═══════════════════════════════════════════════════
+
+let STATE={};
+const dayOrder=["gt","1","2","3","4","5","watcher"];
+let currentView="gt";
+let selectedAgent=null;
+
+const ROLE_COLORS={
+  prisoner:{bg:"rgba(91,155,214,0.10)",border:"rgba(91,155,214,0.25)",text:"#5b9bd6",initBg:"rgba(91,155,214,0.15)"},
+  guard:{bg:"rgba(224,168,74,0.10)",border:"rgba(224,168,74,0.25)",text:"#e0a84a",initBg:"rgba(224,168,74,0.15)"}
+};
+
+function initials(name){return name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();}
+
+function portraitHtml(agent,size=38,classes="portrait"){
+  const c=ROLE_COLORS[agent.role];
+  const imgSrc=agent.portrait;
+  return `<div class="${classes}" style="width:${size}px;height:${size}px;background:${c.initBg};border-color:${c.border}">
+    <img src="${imgSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+    <span class="portrait-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;color:${c.text};font-size:${size>44?16:12}px">${initials(agent.name)}</span>
+  </div>`;
+}
+
+function renderRoster(){
+  const list=document.getElementById("rosterList");
+  list.innerHTML="";
+  STATE.agents.forEach(agent=>{
+    const isInstigator=agent.id===STATE.event.agentId;
+    const oc=agent.outcome;
+    const div=document.createElement("div");
+    div.className="agent-card"+(isInstigator?" instigator-card":"");
+    div.onclick=()=>selectAgent(agent.id);
+    div.innerHTML=`${portraitHtml(agent,38)}
+      <div class="agent-meta">
+        <div class="agent-name">${agent.name}${isInstigator?'<span class="instigator-tag">instigator</span>':""}</div>
+        <div class="agent-role">${agent.role} · ${agent.traits.join(", ")}</div>
+        <span class="agent-outcome outcome-${oc}">${oc}</span>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function renderGroundTruth(){
+  const e=STATE.event;
+  document.getElementById("seedDisplay").textContent=STATE.seed;
+  document.getElementById("gtGrid").innerHTML=`
+    <div class="gt-card">
+      <div class="gt-card-label">Agent</div>
+      <div class="gt-card-value" style="font-size:18px;font-family:var(--font-display)">${e.agentName} <span style="font-size:12px;font-family:var(--font-mono);color:var(--text3)">[${e.role}]</span></div>
+    </div>
+    <div class="gt-card">
+      <div class="gt-card-label">Action</div>
+      <div class="gt-card-value">${e.action}</div>
+    </div>
+    <div class="gt-card">
+      <div class="gt-card-label">Location</div>
+      <div class="gt-card-value">${e.location}</div>
+    </div>
+    <div class="gt-card">
+      <div class="gt-card-label">True reason</div>
+      <div class="gt-card-value">${e.reason}</div>
+    </div>
+    <div class="gt-card">
+      <div class="gt-card-label">Time</div>
+      <div class="gt-card-value">${e.time} · Duration ~${randInt(2,12)} min</div>
+    </div>
+    <div class="gt-card gt-hidden">
+      <div class="gt-card-label">Hidden at location</div>
+      <div class="gt-card-value">${e.hiddenValue||"nothing"}</div>
+    </div>`;
+}
+
+function renderPerception(){
+  const grid=document.getElementById("percGrid");
+  grid.innerHTML="";
+  STATE.perceptions.forEach(p=>{
+    const agent=STATE.agents.find(a=>a.id===p.observerId);
+    const div=document.createElement("div");
+    div.className=`perc-row ${p.label}`;
+    const hasBelief=p.label!=="benign";
+    div.innerHTML=`
+      ${portraitHtml(agent,38)}
+      <div>
+        <div class="perc-who">
+          <span class="perc-name">${p.observerName}</span>
+          <span class="perc-role-tag">${p.observerRole}</span>
+        </div>
+        <div class="perc-belief ${hasBelief?"":"none"}" style="margin-top:4px">
+          ${hasBelief?`"${p.perceivedValue}"`:"No significant belief formed"}
+        </div>
+        ${hasBelief?`<div style="margin-top:6px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">conf ${p.confidence.toFixed(2)} · trust ${p.trust.toFixed(2)} · dice ${p.dice.toFixed(2)} · suspicion ${p.suspicion.toFixed(2)}</div>`:""}
+        <div style="margin-top:6px">
+          <div class="stats-row"><span class="stat-label" style="font-size:9px">trust</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${p.trust*100}%;background:var(--blue)"></div></div><span class="stat-val">${p.trust.toFixed(2)}</span></div>
+          <div class="stats-row"><span class="stat-label" style="font-size:9px">suspicion</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${p.suspicion*100}%;background:${p.label==="suspicious"?"var(--red)":p.label==="uncertain"?"var(--amber)":"var(--green)"}"></div></div><span class="stat-val">${p.suspicion.toFixed(2)}</span></div>
+        </div>
+      </div>
+      <div><span class="perc-badge badge-${p.label}">${p.label}</span></div>`;
+    grid.appendChild(div);
+  });
+}
+
+function renderPropDay(day,gridId){
+  const grid=document.getElementById(gridId);
+  grid.innerHTML="";
+  const entries=STATE.propLog.filter(e=>e.day===day);
+  if(!entries.length){grid.innerHTML='<div style="font-size:13px;color:var(--text3);font-family:var(--font-mono);padding:16px">No information movement this day.</div>';return;}
+  entries.forEach(e=>{
+    const sender=STATE.agents.find(a=>a.id===e.senderId);
+    const recv=STATE.agents.find(a=>a.id===e.receiverId);
+    const div=document.createElement("div");
+    div.className="prop-item";
+    const typeLabels={honest:"honest",distorted:"distorted",plant:"trap planted",withheld:"withheld",fight:"refused",tip_guard:"tip to guard"};
+    div.innerHTML=`
+      <div class="prop-header">
+        ${portraitHtml(sender,30)}
+        <span class="perc-name" style="font-size:13px">${e.senderName}</span>
+        <span class="prop-arrow" style="margin:0 2px">→</span>
+        ${portraitHtml(recv,30)}
+        <span class="perc-name" style="font-size:13px">${e.receiverName}</span>
+        <span class="prop-type-badge type-${e.type}">${typeLabels[e.type]||e.type}</span>
+      </div>
+      <div class="prop-transmitted">"${e.transmitted}"</div>
+      <div style="margin-top:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">hops: ${e.hops} · truth rate: ${e.senderTruth}${e.deferred?` · <span style="color:var(--amber)">trap fires day ${e.deferred.executeOnDay}</span>`:""}
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function renderResolutions(){
+  const container=document.getElementById("trapResolutions");
+  const escapeC=document.getElementById("escapeAttempts");
+  const noOut=document.getElementById("noOutcomes");
+  container.innerHTML="";escapeC.innerHTML="";
+
+  const traps=STATE.trapResults;
+  const escapeOutcomes=STATE.outcomes.filter(o=>o.cause.includes("Escape"));
+
+  if(!traps.length&&!escapeOutcomes.length){noOut.style.display="block";return;}
+  noOut.style.display="none";
+
+  traps.forEach(t=>{
+    const cls=t.detected?"detected":t.success?"succeeded":"failed";
+    const statusLabel=t.detected?"⚡ Target Warned":t.success?"✓ Trap Succeeded":"✗ Trap Failed";
+    const div=document.createElement("div");
+    div.className=`trap-card ${cls}`;
+    div.innerHTML=`
+      <div class="trap-label" style="color:${t.detected?"var(--blue)":t.success?"var(--red)":"var(--text3)"}">${statusLabel}</div>
+      <div class="trap-meta">
+        <div class="trap-row"><span class="trap-key">planted by</span><span class="trap-val">${t.plantedBy} (Day ${t.plantDay})</span></div>
+        <div class="trap-row"><span class="trap-key">target</span><span class="trap-val">${t.target}</span></div>
+        <div class="trap-row"><span class="trap-key">false loc</span><span class="trap-val">${t.location}</span></div>
+        <div class="trap-row"><span class="trap-key">outcome</span><span class="trap-val" style="color:${t.outcomeLabel==="caught"?"var(--red)":t.outcomeLabel==="warned"?"var(--blue)":"var(--text3)"}">${t.outcomeLabel.toUpperCase()}</span></div>
+      </div>
+      <div style="margin-top:14px;font-size:13px;color:var(--text2);line-height:1.5;font-style:italic">${t.detail}</div>`;
+    container.appendChild(div);
+  });
+
+  escapeOutcomes.forEach(o=>{
+    const div=document.createElement("div");
+    div.className="outcome-big";
+    div.innerHTML=`
+      <div style="font-size:10px;font-family:var(--font-mono);color:var(--text3);margin-bottom:8px">ESCAPE ATTEMPT</div>
+      <div class="outcome-name" style="color:${o.outcome==="escaped"?"var(--green)":"var(--red)"}">${o.agentName} — ${o.outcome.toUpperCase()}</div>
+      <div class="outcome-detail">${o.detail}</div>`;
+    escapeC.appendChild(div);
+  });
+}
+
+function renderWatcher(){
+  const d=STATE.distortion;
+  const allAgents=STATE.agents;
+  const levels=Object.values(d);
+  const distorted=levels.filter(l=>["HIGH","MED","LOW"].includes(l.level));
+  const avgScore=distorted.length?
+    (distorted.reduce((s,l)=>s+l.score,0)/distorted.length).toFixed(2):"0.00";
+  const trapsPlanted=STATE.trapResults.length;
+  const trapsSucceeded=STATE.trapResults.filter(t=>t.success).length;
+  const escaped=STATE.outcomes.filter(o=>o.outcome==="escaped").length;
+  const caught=STATE.outcomes.filter(o=>o.outcome==="caught"||o.outcome==="shot").length;
+
+  document.getElementById("watcherDesc").innerHTML=
+    `On Day 1 at ${STATE.event.time}, <strong style="color:var(--text)">${STATE.event.agentName}</strong> (${STATE.event.role}) was at the <em>${STATE.event.location}</em>. True reason: ${STATE.event.reason}. The location contained: <strong style="color:var(--watcher)">${STATE.event.hiddenValue||"nothing"}</strong>.<br><br>The Watcher recorded every perception, every transmission, every trap. The gap between this record and what any agent believes is the distortion score — that gap is the research data.`;
+
+  document.getElementById("summaryStats").innerHTML=`
+    <div class="summary-stat"><span class="summary-num">${distorted.length}/${allAgents.length}</span><span class="summary-unit">distorted</span></div>
+    <div class="summary-stat"><span class="summary-num">${avgScore}</span><span class="summary-unit">avg distortion</span></div>
+    <div class="summary-stat"><span class="summary-num">${trapsPlanted}</span><span class="summary-unit">traps planted</span></div>
+    <div class="summary-stat"><span class="summary-num">${escaped}</span><span class="summary-unit">escaped</span></div>
+    <div class="summary-stat"><span class="summary-num">${caught}</span><span class="summary-unit">caught</span></div>`;
+
+  const grid=document.getElementById("distortionGrid");
+  grid.innerHTML="";
+  allAgents.forEach(agent=>{
+    const dist=d[agent.id];
+    if(!dist)return;
+    const lv=dist.level;
+    const score=dist.score||0;
+    const barW=Math.min(100,score*80);
+    const div=document.createElement("div");
+    div.className=`dist-row dist-${lv.split(" ")[0]}`;
+    div.innerHTML=`
+      ${portraitHtml(agent,36)}
+      <div>
+        <div style="font-size:13px;font-weight:500">${agent.name} <span style="font-size:11px;font-family:var(--font-mono);color:var(--text3)">[${agent.role}]</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;font-style:italic">${dist.belief||"no belief formed"}</div>
+        <div class="dist-meter">
+          <div class="dist-bar-wrap"><div class="dist-bar-fill" style="width:${barW}%"></div></div>
+          <span class="dist-score">${score.toFixed(2)}</span>
+        </div>
+      </div>
+      <span class="dist-label dl-${lv.split(" ")[0]}">${lv}</span>`;
+    grid.appendChild(div);
+  });
+}
+
+function renderAgentDetail(agentId){
+  const agent=STATE.agents.find(a=>a.id===agentId);
+  if(!agent)return;
+  const isInstigator=agent.id===STATE.event.agentId;
+  const c=ROLE_COLORS[agent.role];
+  const beliefs=Object.values(agent.beliefs);
+  document.getElementById("agentDetailContent").innerHTML=`
+    <div style="margin-bottom:8px;font-size:11px;font-family:var(--font-mono);color:var(--text3)">AGENT PROFILE</div>
+    <div class="agent-detail">
+      <div class="ad-header">
+        ${portraitHtml(agent,52,"ad-portrait")}
+        <div>
+          <div class="ad-name">${agent.name}${isInstigator?'<span class="instigator-tag" style="margin-left:8px">instigator</span>':""}</div>
+          <div class="ad-role">${agent.role} · truth rate: ${agent.truthRate} (hidden from others)</div>
+          <span class="agent-outcome outcome-${agent.outcome}" style="margin-top:4px">${agent.outcome}</span>
+        </div>
+      </div>
+      <div class="divider" style="margin:12px 0"></div>
+      <div class="ad-section">
+        <div class="ad-label">Traits</div>
+        ${agent.traits.map(t=>`<span class="trait-pill">${t}</span>`).join("")}
+      </div>
+      <div class="ad-section">
+        <div class="ad-label">Agenda</div>
+        <div class="ad-agenda">${agent.agenda}</div>
+      </div>
+      <div class="ad-section">
+        <div class="ad-label">Trust scores</div>
+        ${STATE.agents.filter(a=>a.id!==agent.id).map(other=>{
+          const t=agent.getTrust(other.id);
+          return `<div class="stats-row"><span class="stat-label">${other.name.split(" ").pop().slice(0,8)}</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${t*100}%;background:${t>0.6?"var(--green)":t>0.35?"var(--amber)":"var(--red)"}"></div></div><span class="stat-val">${t.toFixed(2)}</span></div>`;
+        }).join("")}
+      </div>
+      <div class="ad-section">
+        <div class="ad-label">Beliefs (end of simulation)</div>
+        ${beliefs.length?beliefs.map(b=>`
+          <div class="belief-item">"${b.value}"<div class="belief-conf">conf ${b.confidence.toFixed(2)} · hops ${b.hops} · from ${b.sourceId}</div></div>`).join("")
+          :'<div style="font-size:12px;color:var(--text3);font-family:var(--font-mono)">No beliefs formed</div>'}
+      </div>
+    </div>`;
+}
+
+// ── Navigation ────────────────────────────────────
+function showDay(day,btn){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("visible"));
+  document.querySelectorAll(".day-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".agent-card").forEach(c=>c.classList.remove("active"));
+  document.querySelectorAll(".watcher-entry").forEach(w=>w.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  currentView=day;
+  selectedAgent=null;
+
+  if(day==="watcher"){
+    document.getElementById("panel-watcher").classList.add("visible");
+    document.getElementById("watcherEntry").classList.add("active");
+  }else{
+    document.getElementById(`panel-${day}`).classList.add("visible");
+  }
+  updateNavButtons();
+}
+
+function selectAgent(agentId){
+  selectedAgent=agentId;
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("visible"));
+  document.querySelectorAll(".day-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".agent-card").forEach(c=>c.classList.remove("active"));
+  const card=document.querySelector(`[onclick="selectAgent('${agentId}')"]`);
+  if(card)card.classList.add("active");
+  renderAgentDetail(agentId);
+  document.getElementById("panel-agent").classList.add("visible");
+  currentView="agent";
+  updateNavButtons();
+}
+
+function selectWatcher(){
+  showDay("watcher",null);
+  document.querySelectorAll(".day-btn").forEach(b=>b.classList.remove("active"));
+}
+
+function navigate(dir){
+  const order=["gt","1","2","3","4","5","watcher"];
+  const idx=order.indexOf(currentView);
+  if(idx===-1)return;
+  const next=order[idx+dir];
+  if(!next)return;
+  const btn=document.querySelector(`[data-day="${next}"]`);
+  showDay(next,btn);
+}
+
+function updateNavButtons(){
+  const order=["gt","1","2","3","4","5","watcher"];
+  const idx=order.indexOf(currentView);
+  document.getElementById("prevBtn").disabled=idx<=0;
+  document.getElementById("nextBtn").disabled=idx>=order.length-1;
+  if(currentView==="agent"){
+    document.getElementById("prevBtn").disabled=false;
+    document.getElementById("nextBtn").disabled=false;
+  }
+}
+
+// ── Start simulation ──────────────────────────────
+function startSim(){
+  const seedInput=document.getElementById("seedInput");
+  const seed=seedInput.value?parseInt(seedInput.value):Math.floor(Math.random()*99999);
+  seedInput.value=seed;
+  document.getElementById("loadingPanel").style.display="flex";
+  document.querySelectorAll(".panel:not(#loadingPanel)").forEach(p=>p.classList.remove("visible"));
+
+  setTimeout(()=>{
+    STATE=runSimulation(seed);
+    renderRoster();
+    renderGroundTruth();
+    renderPerception();
+    renderPropDay(2,"propGrid2");
+    renderPropDay(3,"propGrid3");
+    renderPropDay(4,"propGrid4");
+    renderResolutions();
+    renderWatcher();
+    document.getElementById("loadingPanel").style.display="none";
+    const firstBtn=document.querySelector('[data-day="gt"]');
+    showDay("gt",firstBtn);
+  },400);
+}
+
+// Auto-run on load
+window.onload=()=>{
+  document.getElementById("seedInput").value=327;
+  startSim();
+};
+</script>
+</body>
+</html>
