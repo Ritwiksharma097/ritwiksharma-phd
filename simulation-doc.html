@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Agent Simulation — Technical Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root {
+    --env:        #1a3a52;
+    --env-mid:    #2d5573;
+    --env-light:  #e8f1f7;
+    --env-border: #a8c5d9;
+  }
+  .page::before { background: var(--env) !important; }
+  .margin-section { color: var(--env-mid); }
+  .env-tag { background: var(--env-light); border-color: var(--env-border); color: var(--env-mid); }
+  .doc-sub { color: var(--env-mid); }
+
+  .context-block { background: var(--env-light); border-color: var(--env-border); border-left-color: var(--env); }
+  .ctx-kicker { color: var(--env-mid); }
+  .ctx-text { color: var(--env); }
+
+  .arch-block { background: var(--parchment-warm); border: 1px solid var(--rule); border-left: 3px solid var(--env); padding: 14px 16px; margin-bottom: 14px; }
+  .arch-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .arch-body { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; }
+
+  .prop-table { width: 100%; border-collapse: collapse; background: var(--parchment-warm); border: 1px solid var(--rule); margin-bottom: 14px; }
+  .prop-table tr { border-bottom: 1px solid var(--rule-light); }
+  .prop-table tr:last-child { border-bottom: none; }
+  .prop-table td { padding: 6px 11px; font-size: 12px; vertical-align: top; }
+  .pt-a { font-weight: 600; color: var(--ink); width: 160px; line-height: 1.4; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .pt-b { color: var(--ink-mid); font-weight: 300; line-height: 1.6; }
+
+  .formula-block { background: var(--parchment-warm); border: 1px solid var(--rule); padding: 12px 14px; margin: 10px 0; font-family: 'JetBrains Mono', monospace; }
+  .formula-label { font-size: 10px; color: var(--env-mid); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .formula-expr { font-size: 12px; color: var(--ink); line-height: 1.8; }
+  .formula-vars { font-size: 11px; color: var(--ink-mid); margin-top: 8px; line-height: 1.6; }
+
+  .scenario-block { background: var(--env-light); border: 1px solid var(--env-border); border-left: 3px solid var(--env); padding: 12px 14px; margin-bottom: 14px; }
+  .scenario-day { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--env-mid); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+  .scenario-text { font-size: 13px; color: var(--env); line-height: 1.6; font-weight: 300; }
+
+  .trait-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .trait-card { background: var(--parchment-warm); border: 1px solid var(--rule); padding: 8px 10px; }
+  .trait-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--env); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  .trait-desc { font-size: 12px; color: var(--ink-mid); line-height: 1.55; font-weight: 300; }
+
+  .watcher-highlight { background: var(--env-light); border: 2px solid var(--env-border); padding: 13px 15px; margin: 14px 0; }
+  .watcher-title { font-size: 14px; font-weight: 600; color: var(--env); margin-bottom: 6px; }
+  .watcher-body { font-size: 13px; color: var(--env-mid); line-height: 1.65; font-weight: 300; font-style: italic; }
+
+  .sim-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+  .sim-meta-card { background: var(--parchment-warm); border: 1px solid var(--rule); padding: 10px 12px; }
+  .sim-meta-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--env-mid); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .sim-meta-value { font-size: 13px; color: var(--ink); line-height: 1.5; font-weight: 400; }
+
+  @media (max-width: 680px) {
+    .trait-grid { grid-template-columns: 1fr; }
+    .sim-meta-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">Ritwik Sharma</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cv.html">CV</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="zombita.html">Zombita</a>
+    <a href="prison-sandbox.html">Prison Sandbox</a>
+    <a href="untamed-shadows.html">Untamed Shadows</a>
+    <a href="simulation-doc.html" class="active">Agent Simulation</a>
+  </div>
+  <button class="nav-hamburger" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="cv.html">CV</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="zombita.html">Zombita</a>
+  <a href="prison-sandbox.html">Prison Sandbox</a>
+  <a href="untamed-shadows.html">Untamed Shadows</a>
+  <a href="simulation-doc.html" class="active">Agent Simulation</a>
+</div>
+
+<div class="page">
+  <div class="margin">
+    <div class="margin-label">Simulation</div>
+    <div class="margin-dot"></div>
+    <div class="margin-section">Architecture</div>
+    <div class="margin-dot"></div>
+    <div class="margin-section">Perception</div>
+    <div class="margin-dot"></div>
+    <div class="margin-section">Propagation</div>
+    <div class="margin-dot"></div>
+    <div class="margin-section">Watcher</div>
+  </div>
+
+  <div class="content">
+
+    <div class="doc-header">
+      <div class="doc-header-inner">
+        <div>
+          <div class="env-tag">Working Research Prototype · JavaScript</div>
+          <div class="doc-title"><em>Agent Simulation</em></div>
+          <div class="doc-sub">Multi-Agent System · Information Reliability · Emergent Narrative Behavior</div>
+        </div>
+        <div class="meta-col">
+          <div class="meta-line">Engine <span>JavaScript (Vanilla)</span></div>
+          <div class="meta-line">Agent Count <span>7 agents per run</span></div>
+          <div class="meta-line">Duration <span>5-day simulation cycle</span></div>
+          <div class="meta-line">Status <span>Functional prototype</span></div>
+          <div class="meta-line">Live Demo <span><a href="simulation.html" target="_blank">Run Simulation →</a></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="context-block">
+      <div class="ctx-kicker">Purpose of This Document</div>
+      <div class="ctx-text">This document describes the agent architecture underlying the Prison Sandbox simulation — a working research prototype demonstrating how autonomous agents with private motivations, unreliable information, and social relationships produce emergent narrative behavior. The simulation is a concrete implementation of the central research question: how information reliability, as a first-class design variable, drives the emergence of social structure and narrative coherence in multi-agent systems.</div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">The Agent — Core Architecture</div></div>
+
+    <div class="arch-block">
+      <div class="arch-title">What is an Agent?</div>
+      <div class="arch-body">An agent is an entity that exists inside the simulation with incomplete knowledge of the world, a reason to act, and a way of seeing other agents that is shaped by who they are — not by what is objectively true. Every agent is generated at the start of the simulation with a fixed set of properties that never change, and a set of dynamic properties that evolve through interaction.</div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Fixed Properties — Generated Once, Never Change</div></div>
+
+    <table class="prop-table">
+      <tr>
+        <td class="pt-a">Identity & Role</td>
+        <td class="pt-b">A name and a role: prisoner, guard, gang member, or independent. Role affects what beliefs they're likely to start with but doesn't lock behavior. A guard and a prisoner can both be honest or deceptive — role shapes probability, not determinism.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Truth Rate</td>
+        <td class="pt-b">A float between 0.0 and 1.0. This is how reliably honest this agent is when they transmit information to others. It's fixed, hidden from every other agent, and only the Watcher knows it. An honest agent sits around 0.85. A sneaky one around 0.50. A habitual liar around 0.20. This isn't about intelligence — a liar can know exactly where the exit is and still transmit the wrong location. Crucially, truth rate is independent of knowledge.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Traits</td>
+        <td class="pt-b">Up to two, drawn from a defined pool. Loyal, Sneaky, Tattler, Cowardly, Violent, Greedy, Connected, Paranoid, Lazy. Traits govern motivation and behavior thresholds — a Loyal agent protects their gang's information, a Paranoid agent misreads neutral behavior as threatening, a Connected agent starts with more beliefs than average.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Agenda</td>
+        <td class="pt-b">What this agent is actually trying to achieve. Derived partly from traits, partly from a random roll at generation. Examples: survive until transfer, protect a specific ally, find the exit, control information flow in their block, frame another prisoner. The agenda is the hidden engine behind every decision the agent makes.</td>
+      </tr>
+    </table>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Trait System — Behavioral Modifiers</div></div>
+
+    <div class="trait-grid">
+      <div class="trait-card">
+        <div class="trait-name">Loyal</div>
+        <div class="trait-desc">Withholds sensitive information from non-allies; trust decay is slower toward allied agents.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Sneaky</div>
+        <div class="trait-desc">Eligible to plant deferred traps; targets low-trust agents for distorted transmissions.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Paranoid</div>
+        <div class="trait-desc">Suspicion score inflated by +0.30 in the perception engine; may form false beliefs from neutral events.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Tattler</div>
+        <div class="trait-desc">Will transmit suspicion beliefs directly to guards rather than peers.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Connected</div>
+        <div class="trait-desc">Starts with more initial beliefs; receives exit route information from external contacts.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Cowardly</div>
+        <div class="trait-desc">Requires higher confidence threshold before acting on beliefs; suspicion score reduced.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Violent</div>
+        <div class="trait-desc">Low-trust interactions may result in a fight response rather than withheld information.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Greedy</div>
+        <div class="trait-desc">Weighted toward transmitting information that produces personal benefit.</div>
+      </div>
+      <div class="trait-card">
+        <div class="trait-name">Lazy</div>
+        <div class="trait-desc">Guard alertness reduced; perception suspicion score slightly dampened.</div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Dynamic Properties — Evolve Through Simulation</div></div>
+
+    <table class="prop-table">
+      <tr>
+        <td class="pt-a">Belief State</td>
+        <td class="pt-b">A sparse, confidence-weighted map of what the agent currently believes about the world. Not every agent knows everything. A new arrival might have almost nothing. A Connected veteran might have partial knowledge of two escape routes and guard schedules for one shift. Each belief entry carries: what the agent believes, how confident they are, who they heard it from, and how many hops it has travelled through other agents before reaching them. <strong>Crucially — beliefs can be wrong from the moment of generation.</strong> The random sheet that seeds the simulation assigns beliefs probabilistically. An agent might start believing the exit is through the kitchen at 60% confidence. That belief might be false. They didn't get it from anyone — it's just what they came in thinking. Everything downstream of that initial wrong belief compounds.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Trust Scores</td>
+        <td class="pt-b">A float toward every other agent in the simulation, seeded randomly at generation and updated through interaction. If Agent B acts in a way that confirms what Agent A expected, A's trust toward B rises slightly. If B's information turns out to be wrong — or if A's perception engine flags B's behavior as suspicious — trust drops. Trust scores are not symmetrical. A can trust B at 0.7 while B trusts A at 0.2.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Deferred Actions</td>
+        <td class="pt-b">A queue of things this agent has set in motion that haven't resolved yet. This is where traps live. An agent can plant false information on Day 1 and schedule a follow-up action on Day 3 — tipping off a guard, positioning themselves, recruiting another agent to be present. The planted information was false when transmitted. By Day 3 the agent has made it partially true. Anyone who acted on the original tip gets caught not because they were wrong but because the trap was built around their belief.</td>
+      </tr>
+    </table>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">The Perception Engine — Where Distortion Begins</div></div>
+
+    <div class="watcher-highlight">
+      <div class="watcher-title">This is where the research question lives</div>
+      <div class="watcher-body">The gap between the ground truth event and Agent A's logged perception of it is the first point of distortion. Everything that propagates through the network downstream of that perception is built on this initial divergence — which emerged not from lying, but from the irreducible subjectivity of observation.</div>
+    </div>
+
+    <div class="arch-block">
+      <div class="arch-body">When Agent A observes Agent B, they don't receive a clean data packet. They receive an event — Agent B near the garbage bins at night, Agent B talking to a guard twice in one day, Agent B avoiding the yard. The perception engine takes that observable behavior, runs it through Agent A's own filters, and produces a logged belief. Those filters are: A's current trust score toward B, A's active agenda at that moment, A's relevant traits, and a dice roll — an instinct variable that represents the irreducible randomness of how a person reads a situation. The dice roll means two agents with identical stats watching the same event can reach different conclusions. That's not a flaw in the model. That's personality.</div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-label">Perception Formula</div>
+      <div class="formula-expr">suspicion = clamp(<br>
+&nbsp;&nbsp;dice + paranoia_bonus + sneaky_bonus + role_bonus<br>
+&nbsp;&nbsp;− loyal_discount − lazy_discount − cowardly_discount<br>
+&nbsp;&nbsp;− (trust × 0.42),<br>
+&nbsp;&nbsp;0, 1<br>
+)</div>
+      <div class="formula-vars">
+<strong>dice</strong> — Random float [0,1], the instinct variable<br>
+<strong>paranoia_bonus</strong> — +0.30 if agent has Paranoid trait<br>
+<strong>sneaky_bonus</strong> — +0.10 if agent has Sneaky trait<br>
+<strong>role_bonus</strong> — +0.14 if guard observing prisoner; +0.08 if prisoner observing guard<br>
+<strong>loyal_discount</strong> — −0.20 if Loyal trait AND trust toward observed agent > 0.60<br>
+<strong>lazy_discount</strong> — −0.10 if Lazy trait<br>
+<strong>cowardly_discount</strong> — −0.08 if Cowardly trait<br>
+<strong>trust × 0.42</strong> — The higher A's trust toward B, the more A interprets B's behavior charitably
+      </div>
+    </div>
+
+    <table class="prop-table">
+      <tr>
+        <td class="pt-a">Suspicion > 0.52</td>
+        <td class="pt-b"><strong>SUSPICIOUS</strong> — Agent forms a false belief: "[observed] is hiding something at [location]"</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Suspicion 0.28–0.52</td>
+        <td class="pt-b"><strong>UNCERTAIN</strong> — Agent forms a weak, ambiguous belief at low confidence</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Suspicion < 0.28</td>
+        <td class="pt-b"><strong>BENIGN</strong> — No belief formed. Event is not logged in agent's belief state.</td>
+      </tr>
+    </table>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Information Propagation — How Beliefs Travel</div></div>
+
+    <div class="arch-block">
+      <div class="arch-body">When Agent A decides to share information with Agent C, the transmission does not pass A's belief directly. It passes through A's truth rate first. What gets logged is not "Agent B was cleaning the garbage bin on guard orders." What gets logged is Agent A's interpretation — "Agent B is hiding something near the garbage bins." The ground truth and the perception are two separate entries. Only the Watcher holds both. When Agent A later tells Agent C what they saw, C receives A's interpretation, not the event. The garbage bin becomes a hiding spot that was never real. That belief travels. It mutates at each hop. Agents who never went near the garbage bin now factor it into their plans.</div>
+    </div>
+
+    <table class="prop-table">
+      <tr>
+        <td class="pt-a">trust < 0.22 AND Violent trait</td>
+        <td class="pt-b"><strong>FIGHT</strong> — A refuses aggressively. Trust toward A drops −0.08.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">trust < 0.28 OR Loyal + cross-role</td>
+        <td class="pt-b"><strong>WITHHELD</strong> — A claims ignorance. Trust toward A drops −0.02.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">dice < truth_rate</td>
+        <td class="pt-b"><strong>HONEST</strong> — A transmits their actual belief.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Sneaky AND trust < 0.55</td>
+        <td class="pt-b"><strong>PLANT</strong> — A transmits a false location AND queues a deferred trap.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">fallthrough</td>
+        <td class="pt-b"><strong>DISTORTED</strong> — A transmits a false location drawn from known alternatives.</td>
+      </tr>
+    </table>
+
+    <div class="arch-block">
+      <div class="arch-body">When a belief is received, the receiver applies a confidence discount based on their trust toward the sender. Confidence decays further with each hop. A belief that was held at 0.80 by its originator arrives with meaningfully less certainty after travelling through two intermediate agents. Beliefs decay by 0.03 per hop. The hop count is preserved so the Watcher can trace the propagation path.</div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">The Watcher — Research Instrument</div></div>
+
+    <div class="watcher-highlight">
+      <div class="watcher-title">The Watcher is the research instrument</div>
+      <div class="watcher-body">The gap between the Watcher's log and any agent's belief state at any moment is the distortion score for that agent. Summed across all agents over time, mapped as a network — that is the data. That is what answers the research questions.</div>
+    </div>
+
+    <div class="arch-block">
+      <div class="arch-body">The Watcher is not an agent. It has no trust scores, no agenda, no beliefs. It cannot be interacted with, seen, or deceived. It exists in one layer above the simulation and records everything with perfect fidelity — every event as it actually happened, every agent perception of that event, every belief update, every deferred action queued and executed.</div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-label">Distortion Score</div>
+      <div class="formula-expr">distortion = (hops × 0.20) + ((1 − confidence) × 0.50)</div>
+      <div class="formula-vars">
+<strong>> 0.60</strong> — HIGH distortion (belief substantially wrong or very weakly held)<br>
+<strong>0.30–0.60</strong> — MEDIUM distortion (partial distortion; belief may be directionally correct but unreliable)<br>
+<strong>< 0.30</strong> — LOW distortion (belief is reasonably accurate)<br>
+<strong>0.00</strong> — NONE (agent is the instigator or has no relevant belief)
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Scenario Walkthrough — One Event, Five Agents</div></div>
+
+    <div class="watcher-highlight">
+      <div class="watcher-title">WATCHER · GROUND TRUTH</div>
+      <div class="watcher-body">Agent E is near the garbage bins at 23:00 because a guard instructed them to move a bag. Duration: four minutes. Nothing is hidden at the location.</div>
+    </div>
+
+    <div class="scenario-block">
+      <div class="scenario-day">Day 1 — Perception</div>
+      <div class="scenario-text"><strong>Agent A</strong> observes the event. Trust toward E: 0.30. Trait: Paranoid (+0.30 suspicion). Dice roll: high. Result: SUSPICIOUS. Belief formed: "E is hiding something near the bins." Confidence: 0.65.<br><br><strong>Agent B</strong> observes the same event. Trust toward E: 0.70 (gang ally). Trait: Loyal (−0.20 discount). Dice roll: low. Result: BENIGN. No belief formed.</div>
+    </div>
+
+    <div class="scenario-block">
+      <div class="scenario-day">Day 2 — Propagation</div>
+      <div class="scenario-text"><strong>Agent A tells Agent C.</strong> C's trust toward A: 0.60. No prior belief about the bins. C updates: belief confidence 0.45. One hop, some decay. The false belief is now in a second agent.<br><br><strong>Agent C tells Agent D.</strong> D's trust toward C: 0.40. D updates at low confidence: 0.25. D has the Sneaky trait and an agenda to control information. D files it away.</div>
+    </div>
+
+    <div class="scenario-block">
+      <div class="scenario-day">Day 3 — Trap</div>
+      <div class="scenario-text"><strong>Agent D</strong> tips off a guard that Agent F — who D wants removed — has been using the bins. D fabricated F's involvement. The guard checks. Finds nothing at the bins. But F is now under suspicion.</div>
+    </div>
+
+    <div class="scenario-block">
+      <div class="scenario-day">Day 5 — Resolution</div>
+      <div class="scenario-text">The deferred trap triggers. F is questioned. The suspicion is now institutionally real.</div>
+    </div>
+
+    <div class="arch-block">
+      <div class="arch-body">The Watcher logged every step. The original event was four minutes of bag-moving on guard orders. What it produced: a false suspicion, a planted accusation, and a permanently altered social dynamic. No one lied about the original event. The distortion emerged entirely from perception, propagation, and one agent's strategic use of a rumour received in good faith.</div>
+    </div>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Research Variables as Implemented Systems</div></div>
+
+    <table class="prop-table">
+      <tr>
+        <td class="pt-a">Information Reliability (RQ1)</td>
+        <td class="pt-b">Truth rate: a fixed, hidden float per agent. Governs whether transmissions are honest, distorted, or planted. Varies continuously from 0.0 to 1.0.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Trust Modeling (RQ2)</td>
+        <td class="pt-b">Per-agent trust scores seeded randomly and updated through interaction. Governs perception discounting, sharing thresholds, and belief acceptance. Asymmetric and non-transitive.</td>
+      </tr>
+      <tr>
+        <td class="pt-a">Consequence Permanence (RQ3)</td>
+        <td class="pt-b">Deferred action queue. Actions planted on Day N execute on Day N+K. Outcomes — caught, escaped, shot, warned — are irreversible within the run.</td>
+      </tr>
+    </table>
+
+    <div class="sec"><div class="sec-rule"></div><div class="sec-title">Simulation Properties</div></div>
+
+    <div class="sim-meta-grid">
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Agent Population</div>
+        <div class="sim-meta-value">7 agents per run (5 prisoners, 2 guards)</div>
+      </div>
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Simulation Duration</div>
+        <div class="sim-meta-value">5 days</div>
+      </div>
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Reproducibility</div>
+        <div class="sim-meta-value">Fully deterministic given seed (Mulberry32 PRNG)</div>
+      </div>
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Instigator Selection</div>
+        <div class="sim-meta-value">Weighted random — prisoners 3× more likely</div>
+      </div>
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Trait Assignment</div>
+        <div class="sim-meta-value">Random sample from pool of 9, max 2 per agent</div>
+      </div>
+      <div class="sim-meta-card">
+        <div class="sim-meta-label">Initial Trust</div>
+        <div class="sim-meta-value">Random float [0.15, 0.85] per agent pair</div>
+      </div>
+    </div>
+
+    <div class="doc-footer">
+      <div class="doc-footer-l">Agent Simulation · Technical Documentation · Ritwik Sharma · April 2026</div>
+      <div class="doc-footer-r"><a href="https://ritwiksharma-phd.pages.dev/" target="_blank">ritwiksharma-phd.pages.dev</a> &nbsp;·&nbsp; <a href="https://github.com/Ritwiksharma097/Zombita-PhD" target="_blank">GitHub: Zombita</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="nav.js"></script>
+</body>
+</html>
