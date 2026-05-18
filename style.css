@@ -36,6 +36,55 @@ html, body {
   print-color-adjust: exact;
 }
 
+/* ── CROSS-SITE BAR ── */
+.xsite {
+  background: var(--parchment-deep);
+  border-bottom: 1px solid var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-light);
+}
+.xsite-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 7px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.xsite-home {
+  color: var(--ink-mid);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.xsite-home:hover { color: var(--ink); }
+.xsite-home .arrow { color: var(--ink-faint); margin-right: 4px; }
+.xsite-links {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.xsite-links a {
+  color: var(--ink-faint);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.xsite-links a:hover { color: var(--ink-light); }
+.xsite-links a.current {
+  color: var(--scholar);
+  font-weight: 600;
+}
+.xsite-sep { color: var(--ink-faint); opacity: 0.5; }
+@media (max-width: 520px) {
+  .xsite-inner { padding: 6px 16px; gap: 12px; }
+  .xsite { font-size: 10px; }
+  .xsite-home .label { display: none; }
+}
+@media print { .xsite { display: none; } }
+
 /* ── NAV ── */
 .site-nav {
   background: var(--scholar);
